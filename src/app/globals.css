@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans: "Aptos", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Aptos Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --ink: #070809;
+  --carbon: #0d0f11;
+  --panel: #13171a;
+  --panel-raised: #191e22;
+  --line: #2a3035;
+  --line-strong: #3b444b;
+  --paper: #f3f0e8;
+  --muted: #9aa3a9;
+  --signal: #f0b323;
+  --signal-strong: #ffd157;
+  --cyan: #55d4c6;
+  --danger: #ed6a5a;
+  --success: #7ccd91;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--ink);
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 78% -15%, rgba(240, 179, 35, 0.10), transparent 31rem),
+    linear-gradient(180deg, #0a0c0e 0%, var(--ink) 48rem);
+  color: var(--paper);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.22;
+  background-image: radial-gradient(circle at 18% 72%, transparent 0 5.5rem, rgba(255,255,255,.025) 5.55rem 5.62rem, transparent 5.68rem);
+}
+
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
+::selection { background: var(--signal); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--signal-strong);
+  outline-offset: 3px;
+}
+
+.font-display { font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif; }
+.font-mono { font-family: var(--font-mono), ui-monospace, monospace; }
+
+.surface-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.hairline { border-color: var(--line); }
+
+@keyframes scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  16%, 82% { opacity: 0.35; }
+  100% { transform: translateY(620%); opacity: 0; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-rise { animation: rise 450ms cubic-bezier(.22,.8,.24,1) both; }
+.delay-1 { animation-delay: 80ms; }
+.delay-2 { animation-delay: 160ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

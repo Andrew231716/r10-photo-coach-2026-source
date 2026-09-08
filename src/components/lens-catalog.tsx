@@ -1,0 +1,22 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Check, Minus, Plus, Search, Star, ThumbsUp, WalletCards, X } from "lucide-react";
+import { useAppState } from "@/components/app-state-provider";
+import { lenses } from "@/data/lenses";
+
+const ratingIcon = { Consigliato: Star, Alternativa: ThumbsUp, Economico: WalletCards };
+
+export function LensCatalog() {
+  const { ownedGear } = useAppState();
+  const [query, setQuery] = useState("");
+  const [tier, setTier] = useState("Tutti");
+  const filtered = useMemo(() => lenses.filter((lens) => (tier === "Tutti" || lens.tier === tier) && `${lens.name} ${lens.uses.join(" ")}`.toLocaleLowerCase("it").includes(query.toLocaleLowerCase("it"))), [query, tier]);
+  return (
+    <div>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row"><label className="flex min-h-12 flex-1 items-center gap-3 border border-[var(--line)] bg-[var(--panel)] px-4 focus-within:border-[var(--signal)]"><Search size={18} className="text-[var(--muted)]" /><span className="sr-only">Cerca obiettivo</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cerca obiettivo o utilizzo…" className="min-w-0 flex-1 bg-transparent text-base outline-none" /></label><div className="flex gap-2 overflow-x-auto">{["Tutti", "Budget", "Medio", "Premium"].map((item) => <button key={item} onClick={() => setTier(item)} className={`min-h-12 shrink-0 border px-4 text-sm ${tier === item ? "border-[var(--signal)] bg-[var(--signal)] text-[var(--ink)]" : "border-[var(--line)] text-[var(--muted)]"}`}>{item}</button>)}</div></div>
+      <div className="grid gap-5 xl:grid-cols-2">{filtered.map((lens) => <article key={lens.id} className="border border-[var(--line)] bg-[var(--panel)] p-5 sm:p-6"><div className="flex items-start justify-between gap-4"><div><div className="flex flex-wrap gap-2"><span className="border border-[var(--line-strong)] px-2 py-1 font-mono text-[0.65rem] uppercase text-[var(--muted)]">{lens.tier}</span>{ownedGear.includes(lens.id) ? <span className="flex items-center gap-1 bg-[var(--success)] px-2 py-1 font-mono text-[0.65rem] uppercase text-[var(--ink)]"><Check size={12} /> In dotazione</span> : null}</div><h2 className="font-display mt-4 text-xl font-semibold">{lens.name}</h2></div><div className="font-mono shrink-0 text-sm text-[var(--signal)]">{lens.indicativePrice}</div></div><div className="mt-5 grid grid-cols-2 gap-px border border-[var(--line)] bg-[var(--line)] text-sm sm:grid-cols-3">{[["Focale", lens.focalLength], ["Eq. R10", lens.equivalent], ["Apertura", lens.aperture], ["IS", lens.stabilization], ["Peso", lens.weight], ["Min. fuoco", lens.minFocus]].map(([label, value]) => <div key={label} className="bg-[var(--carbon)] p-3"><div className="font-mono text-[0.62rem] uppercase text-[var(--muted)]">{label}</div><div className="mt-1 text-xs leading-5">{value}</div></div>)}</div><div className="mt-5 grid gap-5 sm:grid-cols-2"><div><h3 className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-[var(--success)]">Vantaggi</h3><ul className="mt-3 space-y-2">{lens.advantages.map((item) => <li key={item} className="flex gap-2 text-xs leading-5 text-[var(--muted)]"><Plus size={13} className="mt-1 shrink-0 text-[var(--success)]" />{item}</li>)}</ul></div><div><h3 className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-[var(--danger)]">Limiti</h3><ul className="mt-3 space-y-2">{lens.disadvantages.map((item) => <li key={item} className="flex gap-2 text-xs leading-5 text-[var(--muted)]"><Minus size={13} className="mt-1 shrink-0 text-[var(--danger)]" />{item}</li>)}</ul></div></div><div className="mt-5 flex flex-wrap gap-2">{lens.ratings.map((rating) => { const Icon = ratingIcon[rating.rating]; return <span key={`${rating.scenario}-${rating.rating}`} className="flex items-center gap-1.5 border border-[var(--line)] px-2.5 py-1.5 text-xs text-[var(--muted)]"><Icon size={13} className="text-[var(--signal)]" />{rating.scenario} · {rating.rating}</span>; })}</div><a href={lens.sourceUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center gap-2 text-xs text-[var(--muted)] hover:text-[var(--paper)]">Scheda tecnica Canon <span aria-hidden="true">↗</span></a></article>)}</div>
+      {!filtered.length ? <div className="border border-dashed border-[var(--line)] p-10 text-center text-[var(--muted)]"><X className="mx-auto mb-3" />Nessun obiettivo trovato.</div> : null}
+    </div>
+  );
+}
