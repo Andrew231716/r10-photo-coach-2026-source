@@ -1,0 +1,2 @@
+Production deployment trigger for r10-photo-coach-2026.
+Commit source verified locally with npm run typecheck and npm run build.
