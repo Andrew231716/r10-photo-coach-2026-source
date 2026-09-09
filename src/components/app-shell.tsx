@@ -7,8 +7,8 @@ import { AppStateProvider } from "@/components/app-state-provider";
 export function Brand() {
   return (
     <Link href="/" className="flex items-center gap-3" aria-label="R10 Photo Coach, dashboard">
-      <span className="grid size-10 place-items-center rounded-full border border-[var(--signal)] font-mono text-xs font-semibold text-[var(--signal)]">R10</span>
-      <span className="font-display text-[1.05rem] font-semibold tracking-[-0.02em]">Photo <span className="text-[var(--signal)]">Coach</span></span>
+      <span className="relative grid size-10 place-items-center rounded-full border border-[var(--signal)] bg-[radial-gradient(circle,rgba(240,179,35,.16),transparent_62%)] font-mono text-xs font-semibold text-[var(--signal)] shadow-[0_0_24px_rgba(240,179,35,.12)] after:absolute after:inset-1 after:rounded-full after:border after:border-white/10">R10</span>
+      <span className="font-display text-[1.05rem] font-semibold tracking-[-0.025em]">Photo <span className="text-[var(--signal)]">Coach</span><span className="mt-0.5 block font-mono text-[0.52rem] font-normal uppercase tracking-[0.21em] text-[var(--muted)]">Shoot with intent</span></span>
     </Link>
   );
 }
@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <AppStateProvider><div className="min-h-screen">
       <PwaRegister />
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-[var(--line)] bg-[var(--carbon)] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-[var(--line)] bg-[linear-gradient(180deg,#111518,var(--carbon)_42%)] shadow-[20px_0_70px_rgba(0,0,0,.16)] lg:flex">
         <div className="px-6 pt-6"><Brand /></div>
         <DesktopNavigation />
         <SidebarUtilityLinks />

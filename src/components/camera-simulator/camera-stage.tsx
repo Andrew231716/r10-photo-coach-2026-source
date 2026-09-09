@@ -179,17 +179,17 @@ function CameraBody({ controls, activeId, onSelect }: { controls: CameraControl[
 
 export function CameraStage({ controls, activeId, view, onSelect }: { controls: CameraControl[]; activeId: CameraControlId; view: CameraView; onSelect: (id: CameraControlId) => void }) {
   return (
-    <Canvas dpr={[1, 1.6]} shadows camera={{ position: viewPositions.perspective, fov: 34, near: 0.1, far: 100 }} gl={{ antialias: true, alpha: false }}>
-      <color attach="background" args={["#d9dee1"]} />
-      <fog attach="fog" args={["#d9dee1", 12, 24]} />
-      <hemisphereLight args={["#ffffff", "#78838a", 2.1]} />
-      <ambientLight intensity={1.15} />
-      <directionalLight position={[6, 8, 7]} intensity={3.4} color="#fff5d8" castShadow />
-      <directionalLight position={[-7, 4, -5]} intensity={2.2} color="#bdefff" />
-      <pointLight position={[4, -2, 5]} intensity={10} color="#f0b323" distance={12} />
+    <Canvas dpr={[1, 1.6]} shadows camera={{ position: viewPositions.perspective, fov: 34, near: 0.1, far: 100 }} gl={{ antialias: true, alpha: true }}>
+      <fog attach="fog" args={["#cbd3d7", 13, 25]} />
+      <hemisphereLight args={["#ffffff", "#66747b", 2.6]} />
+      <ambientLight intensity={1.35} />
+      <directionalLight position={[6, 8, 7]} intensity={4.2} color="#fff3cf" castShadow shadow-mapSize={[1024, 1024]} />
+      <directionalLight position={[-7, 4, -5]} intensity={3.1} color="#b8f5ef" />
+      <spotLight position={[0, 7, -7]} intensity={4.5} angle={0.6} penumbra={0.8} color="#ffffff" />
+      <pointLight position={[4, -2, 5]} intensity={13} color="#f0b323" distance={12} />
       <CameraBody controls={controls} activeId={activeId} onSelect={onSelect} />
-      <ContactShadows position={[0, -1.55, 0]} opacity={0.35} scale={10} blur={3.4} far={5.5} color="#263036" />
-      <gridHelper args={[18, 28, "#aab3b8", "#c7cdd0"]} position={[0, -1.54, 0]} />
+      <ContactShadows position={[0, -1.55, 0]} opacity={0.48} scale={10} blur={3.1} far={5.5} color="#263036" />
+      <gridHelper args={[18, 28, "#87969d", "#b2bdc2"]} position={[0, -1.54, 0]} />
       <CameraRig view={view} />
     </Canvas>
   );

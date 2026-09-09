@@ -70,13 +70,13 @@ export function CameraSimulator() {
           </div>
         ))}
       </section>
-      <section className="grid overflow-hidden border border-[var(--line)] bg-[var(--panel)] xl:grid-cols-[minmax(0,1.45fr)_420px]">
-        <div className="relative min-h-[460px] border-b border-[var(--line)] sm:min-h-[560px] xl:border-b-0 xl:border-r">
+      <section className="premium-panel grid overflow-hidden xl:grid-cols-[minmax(0,1.45fr)_420px]">
+        <div className="camera-studio relative min-h-[460px] border-b border-[var(--line)] sm:min-h-[560px] xl:border-b-0 xl:border-r">
           <div className="absolute inset-x-0 top-0 z-10 flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
-            <div className="glass flex items-center gap-2 border border-[var(--line)] px-3 py-2 text-xs text-[var(--muted)]">
+            <div className="glass flex items-center gap-2 border border-black/15 px-3 py-2 text-xs text-[var(--paper)] shadow-lg">
               <Rotate3D size={15} className="text-[var(--cyan)]" aria-hidden="true" /> Trascina per ruotare · pizzica o scroll per zoom
             </div>
-            <div className="glass flex flex-wrap border border-[var(--line)] p-1" aria-label="Vista fotocamera">
+            <div className="glass flex flex-wrap border border-black/15 p-1 shadow-lg" aria-label="Vista fotocamera">
               {views.map((item) => (
                 <button key={item.id} type="button" onClick={() => setView(item.id)} className={`min-h-9 px-3 text-xs transition ${view === item.id ? "bg-[var(--signal)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--paper)]"}`}>
                   {item.label}
@@ -86,7 +86,7 @@ export function CameraSimulator() {
           </div>
           <CameraStage controls={cameraControls} activeId={activeId} view={view} onSelect={setActiveId} />
           <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-end justify-between gap-3">
-            <div className="glass border border-[var(--signal)]/60 px-4 py-3">
+            <div className="glass border border-[var(--signal)]/70 px-4 py-3 shadow-xl">
               <div className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[var(--signal)]">Comando evidenziato</div>
               <div className="mt-1 font-display text-lg font-semibold">{activeControl.name}</div>
             </div>
