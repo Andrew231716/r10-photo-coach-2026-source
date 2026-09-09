@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Aperture, Bell, Search } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { DesktopNavigation, MobileNavigation, SidebarUtilityLinks } from "@/components/navigation";
 import { PwaRegister } from "@/components/pwa-register";
 import { AppStateProvider } from "@/components/app-state-provider";
+import { ProfileBadge } from "@/components/profile-badge";
 
 export function Brand() {
   return (
     <Link href="/" className="flex items-center gap-3" aria-label="R10 Photo Coach, dashboard">
-      <span className="relative grid size-10 place-items-center rounded-full border border-[var(--signal)] bg-[radial-gradient(circle,rgba(240,179,35,.16),transparent_62%)] font-mono text-xs font-semibold text-[var(--signal)] shadow-[0_0_24px_rgba(240,179,35,.12)] after:absolute after:inset-1 after:rounded-full after:border after:border-white/10">R10</span>
-      <span className="font-display text-[1.05rem] font-semibold tracking-[-0.025em]">Photo <span className="text-[var(--signal)]">Coach</span><span className="mt-0.5 block font-mono text-[0.52rem] font-normal uppercase tracking-[0.21em] text-[var(--muted)]">Shoot with intent</span></span>
+      <span className="grid size-10 place-items-center rounded-full border border-[var(--signal)] font-mono text-xs font-semibold text-[var(--signal)]">R10</span>
+      <span className="font-display text-[1.05rem] font-semibold tracking-[-0.02em]">Photo <span className="text-[var(--signal)]">Coach</span></span>
     </Link>
   );
 }
@@ -17,7 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <AppStateProvider><div className="min-h-screen">
       <PwaRegister />
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-[var(--line)] bg-[linear-gradient(180deg,#111518,var(--carbon)_42%)] shadow-[20px_0_70px_rgba(0,0,0,.16)] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-[var(--line)] bg-[var(--carbon)] lg:flex">
         <div className="px-6 pt-6"><Brand /></div>
         <DesktopNavigation />
         <SidebarUtilityLinks />
@@ -34,13 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button type="button" disabled aria-label="Notifiche, prossimamente" title="Notifiche disponibili nella Fase 4" className="grid size-10 cursor-not-allowed place-items-center border border-[var(--line)] text-[var(--muted)] opacity-60">
                 <Bell size={18} aria-hidden="true" />
               </button>
-              <div className="hidden items-center gap-3 pl-2 sm:flex">
-                <span className="grid size-9 place-items-center rounded-full bg-[var(--signal)] text-sm font-bold text-[var(--ink)]">JM</span>
-                <div className="leading-tight">
-                  <div className="text-sm font-semibold">Jude</div>
-                  <div className="mt-0.5 flex items-center gap-1 text-xs text-[var(--muted)]"><Aperture size={12} aria-hidden="true" /> Esploratore</div>
-                </div>
-              </div>
+              <ProfileBadge />
             </div>
           </div>
         </header>

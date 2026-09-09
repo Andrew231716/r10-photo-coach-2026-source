@@ -33,6 +33,32 @@ create table if not exists device_states (
   updated_at timestamptz not null default now()
 );
 
+-- Profilo gratuito recuperabile tramite codice personale, senza provider esterni.
+create table if not exists coach_accounts (
+  id uuid primary key,
+  display_name text not null,
+  sync_code_hash text not null unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists coach_account_states (
+  account_id uuid primary key references coach_accounts(id) on delete cascade,
+  state jsonb not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists coach_sessions (
+  session_hash text primary key,
+  account_id uuid not null references coach_accounts(id) on delete cascade,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists coach_sessions_account_id_idx on coach_sessions(account_id);
+create index if not exists coach_sessions_expires_at_idx on coach_sessions(expires_at);
+
 create table if not exists lenses (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,

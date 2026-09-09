@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getDatabase, hasDatabase } from "@/lib/database";
 import { defaultAppState, normalizeAppState } from "@/lib/app-state";
+import { getAccount } from "@/lib/account";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -56,6 +57,12 @@ export async function GET(request: NextRequest) {
   try {
     await ensureStateTable();
     const sql = getDatabase();
+    const account = await getAccount(request);
+    if (account) {
+      const accountRows = await sql`select state from coach_account_states where account_id = ${account.id}::uuid limit 1` as unknown as Array<{ state?: unknown }>;
+      const accountRow = accountRows[0];
+      return noStore(NextResponse.json({ mode: "database", account: true, found: Boolean(accountRow), state: accountRow ? normalizeAppState(accountRow.state) : defaultAppState }));
+    }
     const deviceId = getDeviceId(request);
     const rows = await sql`select state from device_states where device_id = ${deviceId}::uuid limit 1` as unknown as Array<{ state?: unknown }>;
     const row = rows[0];
@@ -97,6 +104,13 @@ export async function PUT(request: NextRequest) {
     const serializedState = JSON.stringify(state);
     await ensureStateTable();
     const sql = getDatabase();
+    const account = await getAccount(request);
+    if (account) {
+      await sql`insert into coach_account_states (account_id, state)
+        values (${account.id}::uuid, ${serializedState}::jsonb)
+        on conflict (account_id) do update set state = excluded.state, updated_at = now()`;
+      return noStore(NextResponse.json({ mode: "database", account: true, saved: true, state }));
+    }
     const deviceId = getDeviceId(request);
     await sql`
       insert into device_states (device_id, state)
