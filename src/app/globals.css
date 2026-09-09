@@ -33,9 +33,9 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(circle at 82% -12%, rgba(240, 179, 35, 0.14), transparent 34rem),
-    radial-gradient(circle at 8% 38%, rgba(85, 212, 198, 0.055), transparent 28rem),
-    linear-gradient(180deg, #0b0e10 0%, var(--ink) 52rem);
+    radial-gradient(circle at 80% -12%, rgba(240, 179, 35, 0.14), transparent 34rem),
+    radial-gradient(circle at 5% 45%, rgba(85, 212, 198, 0.05), transparent 30rem),
+    linear-gradient(180deg, #0a0d0f 0%, var(--ink) 52rem);
   color: var(--paper);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
@@ -78,9 +78,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .premium-panel {
   border: 1px solid var(--line);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 38%),
+    linear-gradient(145deg, rgba(255,255,255,.035), transparent 38%),
     var(--panel);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 22px 65px rgba(0,0,0,.2);
 }
 
 .premium-panel:hover {
@@ -89,26 +89,35 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .hero-vignette {
   background:
-    linear-gradient(90deg, rgba(5, 7, 8, 0.98) 0%, rgba(5, 7, 8, 0.84) 43%, rgba(5, 7, 8, 0.18) 78%, rgba(5, 7, 8, 0.28) 100%),
-    linear-gradient(0deg, rgba(5, 7, 8, 0.78), transparent 48%);
+    linear-gradient(90deg, rgba(5,7,8,.97) 0%, rgba(5,7,8,.82) 46%, rgba(5,7,8,.18) 82%),
+    linear-gradient(0deg, rgba(5,7,8,.82), transparent 54%);
 }
 
-.eyebrow-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  width: fit-content;
-  border: 1px solid rgba(240, 179, 35, 0.45);
-  background: rgba(7, 8, 9, 0.68);
-  padding: 0.55rem 0.75rem;
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.04), 0 12px 35px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(12px);
+.action-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg, rgba(255,255,255,.035), transparent 42%), var(--panel);
+  box-shadow: 0 18px 55px rgba(0,0,0,.16);
+}
+
+.action-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -3rem -5rem auto;
+  width: 9rem;
+  height: 9rem;
+  border-radius: 999px;
+  background: var(--card-glow, var(--amber-glow));
+  filter: blur(24px);
+  opacity: .65;
+  pointer-events: none;
 }
 
 .camera-studio {
   background:
-    radial-gradient(circle at 68% 28%, rgba(255, 209, 87, 0.2), transparent 26%),
-    radial-gradient(circle at 23% 62%, rgba(85, 212, 198, 0.18), transparent 32%),
+    radial-gradient(circle at 68% 28%, rgba(255,209,87,.2), transparent 26%),
+    radial-gradient(circle at 23% 62%, rgba(85,212,198,.18), transparent 32%),
     linear-gradient(145deg, #e7ecee, #aeb8bd);
 }
 
@@ -117,7 +126,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 90px rgba(7, 8, 9, 0.18);
+  box-shadow: inset 0 0 90px rgba(7,8,9,.18);
 }
 
 .hairline { border-color: var(--line); }
@@ -148,6 +157,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 639px) {
   .hero-vignette {
-    background: linear-gradient(0deg, rgba(5, 7, 8, 0.97) 0%, rgba(5, 7, 8, 0.73) 66%, rgba(5, 7, 8, 0.32) 100%);
+    background: linear-gradient(0deg, rgba(5,7,8,.97) 0%, rgba(5,7,8,.78) 68%, rgba(5,7,8,.34) 100%);
   }
 }

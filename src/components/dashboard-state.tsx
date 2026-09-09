@@ -20,11 +20,11 @@ export function DashboardStats() {
   ];
 
   return (
-    <section className="animate-rise delay-2 grid gap-px border border-[var(--line)] bg-[var(--line)] sm:grid-cols-2 xl:grid-cols-4">
+    <section className="animate-rise delay-2 grid grid-cols-2 gap-px border border-[var(--line)] bg-[var(--line)] xl:grid-cols-4" aria-label="I tuoi progressi">
       {stats.map(({ value, label, icon: Icon }) => (
-        <div key={label} className="flex items-center gap-4 bg-[var(--panel)] p-5">
-          <span className="grid size-10 place-items-center rounded-full bg-white/[0.04] text-[var(--signal)]"><Icon size={18} aria-hidden="true" /></span>
-          <div><div className="font-display text-2xl font-semibold">{value}</div><div className="mt-1 text-sm text-[var(--muted)]">{label}</div></div>
+        <div key={label} className="flex min-w-0 items-center gap-3 bg-[var(--panel)] p-4 sm:gap-4 sm:p-5">
+          <span className="hidden size-10 shrink-0 place-items-center rounded-full bg-white/[0.04] text-[var(--signal)] sm:grid"><Icon size={18} aria-hidden="true" /></span>
+          <div className="min-w-0"><div className="font-display text-xl font-semibold sm:text-2xl">{value}</div><div className="mt-1 text-xs leading-4 text-[var(--muted)] sm:text-sm">{label}</div></div>
         </div>
       ))}
     </section>
@@ -38,7 +38,7 @@ export function DashboardAcademyCard() {
   const percentage = Math.round((academyCompleted.length / totalAcademyModules) * 100);
 
   return (
-    <section className="border border-[var(--line)] bg-[var(--panel)] p-6 sm:p-7">
+    <section className="premium-panel p-6 sm:p-7">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
         <ProgressRing value={percentage} label="Percorso Academy" />
         <div className="flex-1">
@@ -47,7 +47,7 @@ export function DashboardAcademyCard() {
           <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{academyCompleted.length} moduli su {totalAcademyModules} · {storageMode === "database" ? "sincronizzati su database" : "salvati sul dispositivo"}</p>
           <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-[var(--line)]"><div className="h-full rounded-full bg-[var(--cyan)] transition-all" style={{ width: `${percentage}%` }} /></div>
         </div>
-        <Link href="/academy" className="grid size-12 shrink-0 place-items-center border border-[var(--line-strong)] transition hover:border-[var(--signal)] hover:text-[var(--signal)]" aria-label="Continua il percorso Academy"><ArrowRight size={20} aria-hidden="true" /></Link>
+        <Link href="/academy" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 bg-[var(--signal)] px-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--signal-strong)]" aria-label="Continua il percorso Academy"><span>Continua</span><ArrowRight size={18} aria-hidden="true" /></Link>
       </div>
     </section>
   );
@@ -58,7 +58,7 @@ export function DashboardGearCard() {
   const owned = allGear.filter((item) => ownedGear.includes(item.id));
 
   return (
-    <section className="border border-[var(--line)] bg-[var(--panel)] p-6">
+    <section className="premium-panel p-6">
       <div className="flex items-center justify-between"><Camera className="text-[var(--signal)]" size={23} /><span className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[var(--muted)]">Il tuo kit</span></div>
       <h2 className="font-display mt-5 text-xl font-semibold">{owned.length ? "Pronto per uscire" : "Configura il tuo kit"}</h2>
       {owned.length ? (

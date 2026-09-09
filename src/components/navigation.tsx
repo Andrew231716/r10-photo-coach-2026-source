@@ -7,9 +7,9 @@ import { Aperture, BookOpen, Box, Camera, Home, LibraryBig, PackageOpen } from "
 const items = [
   { href: "/", label: "Dashboard", shortLabel: "Home", icon: Home },
   { href: "/academy", label: "Academy", shortLabel: "Academy", icon: BookOpen },
-  { href: "/tutorials", label: "Tutorial", shortLabel: "Tutorial", icon: Camera },
-  { href: "/simulator", label: "Simulatore 3D", shortLabel: "3D", icon: Box },
-  { href: "/lenses", label: "Obiettivi", shortLabel: "Obiettivi", icon: Aperture },
+  { href: "/tutorials", label: "Guide di scatto", shortLabel: "Guide", icon: Camera },
+  { href: "/simulator", label: "Comandi fotocamera", shortLabel: "Comandi", icon: Box },
+  { href: "/lenses", label: "Obiettivi", shortLabel: "Lenti", icon: Aperture },
   { href: "/gear", label: "Attrezzatura", shortLabel: "Kit", icon: PackageOpen },
 ];
 
@@ -34,6 +34,7 @@ export function DesktopNavigation() {
                 ? "border-[var(--signal)] bg-[var(--panel-raised)] text-[var(--paper)]"
                 : "border-transparent text-[var(--muted)] hover:bg-white/[0.03] hover:text-[var(--paper)]"
             }`}
+            aria-current={active ? "page" : undefined}
           >
             <Icon size={19} strokeWidth={active ? 2.1 : 1.65} aria-hidden="true" />
             <span>{item.label}</span>
@@ -56,8 +57,10 @@ export function MobileNavigation() {
           <Link
             key={item.href}
             href={item.href}
-            className={`flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[0.7rem] ${active ? "text-[var(--signal)]" : "text-[var(--muted)]"}`}
+            className={`relative flex min-h-16 flex-col items-center justify-center gap-1 px-0.5 text-[0.64rem] transition ${active ? "text-[var(--signal)]" : "text-[var(--muted)]"}`}
+            aria-current={active ? "page" : undefined}
           >
+            {active ? <span className="absolute inset-x-3 top-0 h-0.5 bg-[var(--signal)]" /> : null}
             <Icon size={20} strokeWidth={active ? 2.2 : 1.7} aria-hidden="true" />
             <span>{item.shortLabel}</span>
           </Link>
