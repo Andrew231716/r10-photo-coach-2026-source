@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { default: "R10 Photo Coach", template: "%s · R10 Photo Coach" },
   description: "La scuola fotografica interattiva per imparare davvero a usare la Canon EOS R10.",
   applicationName: "R10 Photo Coach",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "R10 Coach" },
+  appleWebApp: { capable: true, statusBarStyle: "black", title: "R10 Coach" },
   formatDetection: { telephone: false },
   icons: {
     icon: [
