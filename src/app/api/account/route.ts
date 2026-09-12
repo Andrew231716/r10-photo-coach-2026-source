@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cleanDisplayName, createAccount, endSession, findAccountBySyncCode, getAccount, startSession } from "@/lib/account";
+import { cleanDisplayName, createAccount, deleteAccount, endCurrentSession, findAccountBySyncCode, getAccount, getAccountDetails, renameAccount, rotateSyncCode, startSession } from "@/lib/account";
 import { normalizeAppState } from "@/lib/app-state";
 import { getDatabase, hasDatabase } from "@/lib/database";
 
@@ -14,21 +14,51 @@ function noStore(response: NextResponse) {
 export async function GET(request: NextRequest) {
   if (!hasDatabase()) return noStore(NextResponse.json({ mode: "local", account: null }));
   try {
-    const account = await getAccount(request);
-    return noStore(NextResponse.json({ mode: "database", account: account ? { id: account.id, displayName: account.display_name } : null }));
+    const account = await getAccountDetails(request);
+    return noStore(NextResponse.json({ mode: "database", account: account ? { id: account.id, displayName: account.display_name, lastSyncedAt: account.lastSyncedAt } : null }));
   } catch {
     return noStore(NextResponse.json({ mode: "local", account: null, error: "database_unavailable" }, { status: 503 }));
   }
 }
 
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  const requestHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (origin) {
+    try {
+      if (!requestHost || new URL(origin).host !== requestHost) return noStore(NextResponse.json({ error: "origin_not_allowed" }, { status: 403 }));
+    } catch {
+      return noStore(NextResponse.json({ error: "origin_not_allowed" }, { status: 403 }));
+    }
+  }
   if (!hasDatabase()) return noStore(NextResponse.json({ error: "database_required" }, { status: 503 }));
   try {
     const body = await request.json() as { action?: string; displayName?: unknown; syncCode?: unknown; state?: unknown };
     if (body.action === "signout") {
       const response = NextResponse.json({ ok: true });
-      endSession(response);
+      await endCurrentSession(request, response);
       return noStore(response);
+    }
+
+    if (["rename", "rotate_code", "delete"].includes(body.action ?? "")) {
+      const account = await getAccount(request);
+      if (!account) return noStore(NextResponse.json({ error: "authentication_required" }, { status: 401 }));
+      if (body.action === "rename") {
+        const displayName = cleanDisplayName(body.displayName);
+        await renameAccount(account.id, displayName);
+        return noStore(NextResponse.json({ ok: true, displayName }));
+      }
+      if (body.action === "rotate_code") {
+        const syncCode = await rotateSyncCode(account.id);
+        return noStore(NextResponse.json({ ok: true, syncCode }));
+      }
+      if (body.action === "delete") {
+        if (body.syncCode !== "ELIMINA") return noStore(NextResponse.json({ error: "confirmation_required" }, { status: 400 }));
+        await deleteAccount(account.id);
+        const response = NextResponse.json({ ok: true });
+        response.cookies.set("r10-account-session", "", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 0 });
+        return noStore(response);
+      }
     }
 
     if (body.action === "create") {

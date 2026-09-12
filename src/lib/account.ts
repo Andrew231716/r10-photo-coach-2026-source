@@ -90,6 +90,33 @@ export async function getAccount(request: NextRequest) {
   return rows[0] ?? null;
 }
 
+export async function getAccountDetails(request: NextRequest) {
+  const account = await getAccount(request);
+  if (!account) return null;
+  const sql = getDatabase();
+  const rows = await sql`select updated_at from coach_account_states where account_id = ${account.id}::uuid limit 1` as unknown as Array<{ updated_at: string | Date }>;
+  return { ...account, lastSyncedAt: rows[0]?.updated_at ?? null };
+}
+
+export async function renameAccount(accountId: string, displayName: string) {
+  const sql = getDatabase();
+  const name = cleanDisplayName(displayName);
+  await sql`update coach_accounts set display_name = ${name}, updated_at = now() where id = ${accountId}::uuid`;
+  return name;
+}
+
+export async function rotateSyncCode(accountId: string) {
+  const sql = getDatabase();
+  const syncCode = createSyncCode();
+  await sql`update coach_accounts set sync_code_hash = ${digest(normalizeSyncCode(syncCode))}, updated_at = now() where id = ${accountId}::uuid`;
+  return syncCode;
+}
+
+export async function deleteAccount(accountId: string) {
+  const sql = getDatabase();
+  await sql`delete from coach_accounts where id = ${accountId}::uuid`;
+}
+
 export async function startSession(response: NextResponse, accountId: string) {
   const token = createSessionToken();
   const sql = getDatabase();
@@ -107,4 +134,13 @@ export async function startSession(response: NextResponse, accountId: string) {
 
 export function endSession(response: NextResponse) {
   response.cookies.set(accountCookieName, "", { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 0 });
+}
+
+export async function endCurrentSession(request: NextRequest, response: NextResponse) {
+  const token = request.cookies.get(accountCookieName)?.value;
+  if (token) {
+    const sql = getDatabase();
+    await sql`delete from coach_sessions where session_hash = ${digest(token)}`;
+  }
+  endSession(response);
 }

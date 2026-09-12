@@ -32,7 +32,7 @@ export function DashboardStats() {
 }
 
 export function DashboardAcademyCard() {
-  const { academyCompleted, storageMode } = useAppState();
+  const { academyCompleted, syncStatus } = useAppState();
   const modules = academyLevels.flatMap((level) => level.modules);
   const nextModule = modules.find((module) => !academyCompleted.includes(module.id));
   const percentage = Math.round((academyCompleted.length / totalAcademyModules) * 100);
@@ -44,7 +44,7 @@ export function DashboardAcademyCard() {
         <div className="flex-1">
           <p className="font-mono text-xs uppercase tracking-[0.15em] text-[var(--cyan)]">{nextModule ? "Continua l'Academy" : "Academy completata"}</p>
           <h2 className="font-display mt-2 text-2xl font-semibold">{nextModule?.title ?? "Ottimo lavoro"}</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{academyCompleted.length} moduli su {totalAcademyModules} · {storageMode === "database" ? "sincronizzati su database" : "salvati sul dispositivo"}</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{academyCompleted.length} moduli su {totalAcademyModules} · {syncStatus === "saved" ? "salvati online" : "vedi lo stato di salvataggio"}</p>
           <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-[var(--line)]"><div className="h-full rounded-full bg-[var(--cyan)] transition-all" style={{ width: `${percentage}%` }} /></div>
         </div>
         <Link href="/academy" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 bg-[var(--signal)] px-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--signal-strong)]" aria-label="Continua il percorso Academy"><span>Continua</span><ArrowRight size={18} aria-hidden="true" /></Link>

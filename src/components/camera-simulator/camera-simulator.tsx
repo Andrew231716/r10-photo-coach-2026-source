@@ -21,7 +21,8 @@ function matchGuide(query: string) {
   const normalized = query.toLocaleLowerCase("it");
   if (/sport|servo|atleta|movimento|tracking/.test(normalized)) return "sport-servo" as const;
   if (/manual|mf|stella|via lattea|astro/.test(normalized)) return "manual-focus" as const;
-  return "portrait-av" as const;
+  if (/ritratt|portrait|eye|occhi|diaframma|\bav\b/.test(normalized)) return "portrait-av" as const;
+  return null;
 }
 
 export function CameraSimulator() {
@@ -30,6 +31,10 @@ export function CameraSimulator() {
   const [guideId, setGuideId] = useState<(typeof coachGuides)[number]["id"]>("portrait-av");
   const [stepIndex, setStepIndex] = useState(0);
   const [query, setQuery] = useState("");
+  const [searchMessage, setSearchMessage] = useState("");
+  const [finished, setFinished] = useState(false);
+  const [showModel, setShowModel] = useState(true);
+  const [modelVersion, setModelVersion] = useState(0);
 
   const activeControl = controlsById.get(activeId) ?? cameraControls[0];
   const guide = guidesById.get(guideId) ?? coachGuides[0];
@@ -41,6 +46,7 @@ export function CameraSimulator() {
     const nextStep = nextGuide.steps[boundedIndex];
     const control = controlsById.get(nextStep.controlId);
     setStepIndex(boundedIndex);
+    setFinished(false);
     setActiveId(nextStep.controlId);
     if (control) setView(control.view);
   };
@@ -48,16 +54,27 @@ export function CameraSimulator() {
   const startGuide = (id: (typeof coachGuides)[number]["id"]) => {
     const nextGuide = guidesById.get(id) ?? coachGuides[0];
     setGuideId(id);
+    setSearchMessage("");
     showStep(0, nextGuide);
   };
 
   const submitPrompt = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    startGuide(matchGuide(query));
+    const match = matchGuide(query);
+    if (!match) {
+      setSearchMessage("Non ho una guida per questa richiesta. Scegli uno dei percorsi disponibili qui sotto. La ricerca seleziona guide predefinite, non è una chat AI.");
+      return;
+    }
+    startGuide(match);
   };
 
   return (
     <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-3">
+        <button type="button" onClick={() => setShowModel((current) => !current)} aria-pressed={!showModel} className="min-h-11 border border-[var(--line)] px-4 text-sm">{showModel ? "Usa solo le istruzioni" : "Mostra modello 3D"}</button>
+        {showModel ? <button type="button" onClick={() => { setView("perspective"); setModelVersion((current) => current + 1); }} className="min-h-11 border border-[var(--line)] px-4 text-sm">Ripristina vista e zoom</button> : null}
+        <p className="text-xs text-[var(--muted)]">Modello schematico: non è una replica completa dei menu Canon.</p>
+      </div>
       <section className="grid gap-px border border-[var(--line)] bg-[var(--line)] sm:grid-cols-3" aria-label="Come usare il simulatore">
         {[
           ["01", "Scegli una guida", "Av, Eye Detection, Servo AF o fuoco manuale"],
@@ -70,21 +87,21 @@ export function CameraSimulator() {
           </div>
         ))}
       </section>
-      <section className="premium-panel grid overflow-hidden xl:grid-cols-[minmax(0,1.45fr)_420px]">
-        <div className="camera-studio relative min-h-[460px] border-b border-[var(--line)] sm:min-h-[560px] xl:border-b-0 xl:border-r">
+      <section className={`premium-panel grid overflow-hidden ${showModel ? "xl:grid-cols-[minmax(0,1.45fr)_420px]" : ""}`}>
+        {showModel ? <div className="camera-studio relative min-h-[460px] border-b border-[var(--line)] sm:min-h-[560px] xl:border-b-0 xl:border-r">
           <div className="absolute inset-x-0 top-0 z-10 flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
             <div className="glass flex items-center gap-2 border border-black/15 px-3 py-2 text-xs text-[var(--paper)] shadow-lg">
               <Rotate3D size={15} className="text-[var(--cyan)]" aria-hidden="true" /> Trascina per ruotare · pizzica o scroll per zoom
             </div>
             <div className="glass flex flex-wrap border border-black/15 p-1 shadow-lg" aria-label="Vista fotocamera">
               {views.map((item) => (
-                <button key={item.id} type="button" onClick={() => setView(item.id)} className={`min-h-9 px-3 text-xs transition ${view === item.id ? "bg-[var(--signal)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--paper)]"}`}>
+                <button key={item.id} type="button" aria-pressed={view === item.id} onClick={() => setView(item.id)} className={`min-h-11 px-3 text-xs transition ${view === item.id ? "bg-[var(--signal)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--paper)]"}`}>
                   {item.label}
                 </button>
               ))}
             </div>
           </div>
-          <CameraStage controls={cameraControls} activeId={activeId} view={view} onSelect={setActiveId} />
+          <CameraStage key={modelVersion} controls={cameraControls} activeId={activeId} view={view} onSelect={setActiveId} />
           <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-end justify-between gap-3">
             <div className="glass border border-[var(--signal)]/70 px-4 py-3 shadow-xl">
               <div className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[var(--signal)]">Comando evidenziato</div>
@@ -92,7 +109,7 @@ export function CameraSimulator() {
             </div>
             <div className="hidden font-mono text-[0.65rem] uppercase tracking-[0.16em] text-[var(--muted)] sm:block">Schema didattico · EOS R10</div>
           </div>
-        </div>
+        </div> : null}
 
         <aside className="flex min-h-[500px] flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
@@ -107,7 +124,7 @@ export function CameraSimulator() {
             {guide.steps.map((item, index) => <span key={`${guide.id}-${item.title}`} className={`h-1 flex-1 ${index <= stepIndex ? "bg-[var(--signal)]" : "bg-[var(--line)]"}`} />)}
           </div>
 
-          <div className="mt-6 border-l-2 border-[var(--signal)] bg-white/[0.025] p-5">
+          <div aria-live="polite" className="mt-6 border-l-2 border-[var(--signal)] bg-white/[0.025] p-5">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--signal)]"><MousePointer2 size={15} /> {stepControl.label}</div>
             <h3 className="font-display mt-3 text-xl font-semibold">{step.title}</h3>
             <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{step.instruction}</p>
@@ -128,10 +145,11 @@ export function CameraSimulator() {
             <button type="button" onClick={() => showStep(stepIndex - 1)} disabled={stepIndex === 0} className="inline-flex min-h-11 items-center gap-2 border border-[var(--line)] px-4 text-sm text-[var(--muted)] transition enabled:hover:border-[var(--line-strong)] enabled:hover:text-[var(--paper)] disabled:opacity-35">
               <ArrowLeft size={16} /> Indietro
             </button>
-            <button type="button" onClick={() => showStep(stepIndex + 1)} disabled={stepIndex === guide.steps.length - 1} className="inline-flex min-h-11 items-center gap-2 bg-[var(--signal)] px-4 text-sm font-semibold text-[var(--ink)] transition enabled:hover:bg-[var(--signal-strong)] disabled:opacity-40">
-              Prossimo <ArrowRight size={16} />
+            <button type="button" onClick={() => stepIndex === guide.steps.length - 1 ? setFinished(true) : showStep(stepIndex + 1)} disabled={finished} className="inline-flex min-h-11 items-center gap-2 bg-[var(--signal)] px-4 text-sm font-semibold text-[var(--ink)] transition enabled:hover:bg-[var(--signal-strong)] disabled:opacity-40">
+              {finished ? "Terminata" : stepIndex === guide.steps.length - 1 ? "Ho finito" : "Prossimo"} <ArrowRight size={16} />
             </button>
           </div>
+          {finished ? <div role="status" className="mt-4 border border-[var(--success)]/40 p-4 text-sm"><p>Guida terminata. Controlla il risultato sulla tua fotocamera: il simulatore non può verificarlo automaticamente.</p><button type="button" onClick={() => showStep(0)} className="mt-3 min-h-11 px-3 text-[var(--signal)] underline">Ripeti la guida</button></div> : null}
         </aside>
       </section>
 
@@ -144,6 +162,7 @@ export function CameraSimulator() {
             <input id="camera-command" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Es. Imposta Av, f/2.8 ed Eye Detection" className="min-h-12 min-w-0 flex-1 bg-transparent px-4 text-sm text-[var(--paper)] outline-none placeholder:text-[var(--muted)]" />
             <button type="submit" aria-label="Avvia guida" className="grid w-12 place-items-center text-[var(--signal)]"><Search size={18} /></button>
           </form>
+          {searchMessage ? <p role="status" className="mt-3 text-sm leading-6 text-[var(--signal)]">{searchMessage}</p> : null}
           <div className="mt-3 flex flex-wrap gap-2">
             {coachGuides.map((item) => <button key={item.id} type="button" onClick={() => startGuide(item.id)} className={`border px-3 py-2 text-left text-xs transition ${guide.id === item.id ? "border-[var(--signal)] text-[var(--paper)]" : "border-[var(--line)] text-[var(--muted)] hover:border-[var(--line-strong)]"}`}>{item.prompt}</button>)}
           </div>

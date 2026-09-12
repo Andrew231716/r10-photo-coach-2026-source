@@ -7,6 +7,8 @@ type StorageMode = "local" | "database";
 type AppStateContextValue = AppState & {
   ready: boolean;
   storageMode: StorageMode;
+  syncStatus: "checking" | "saving" | "saved" | "error" | "local";
+  localStorageError: boolean;
   toggleAcademyModule: (id: string) => void;
   toggleTutorial: (slug: string) => void;
   setOwnedGear: (ids: string[]) => void;
@@ -51,6 +53,7 @@ async function saveDatabaseState(state: AppState) {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ state }),
+    signal: AbortSignal.timeout(15000),
   });
   return response.ok;
 }
@@ -59,53 +62,77 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(defaultAppState);
   const [ready, setReady] = useState(false);
   const [storageMode, setStorageMode] = useState<StorageMode>("local");
+  const [syncStatus, setSyncStatus] = useState<AppStateContextValue["syncStatus"]>("checking");
+  const [localStorageError, setLocalStorageError] = useState(false);
+  const saveQueue = useRef<Promise<void>>(Promise.resolve());
   const stateRef = useRef(state);
+
+  const persistLocal = useCallback((next: AppState) => {
+    try { saveLocalState(next); setLocalStorageError(false); }
+    catch { setLocalStorageError(true); }
+  }, []);
+
+  const persistRemote = useCallback((next: AppState) => {
+    setSyncStatus("saving");
+    saveQueue.current = saveQueue.current.then(async () => {
+      try {
+        const saved = await saveDatabaseState(next);
+        if (saved) setStorageMode("database");
+        if (stateRef.current === next) setSyncStatus(saved ? "saved" : "error");
+      } catch {
+        if (stateRef.current === next) setSyncStatus("error");
+      }
+    });
+    return saveQueue.current;
+  }, []);
 
   useEffect(() => {
     let active = true;
-    const localState = readLocalState();
+    let localState = defaultAppState;
+    try { localState = readLocalState(); }
+    catch { setLocalStorageError(true); }
     stateRef.current = localState;
     setState(localState);
     setReady(true);
 
-    void fetch("/api/state", { cache: "no-store" })
+    void fetch("/api/state", { cache: "no-store", signal: AbortSignal.timeout(15000) })
       .then(async (response) => {
-        if (!response.ok) return null;
+        if (!response.ok) throw new Error("sync_unavailable");
         return response.json() as Promise<{ mode?: string; found?: boolean; state?: unknown }>;
       })
       .then(async (payload) => {
-        if (!active || payload?.mode !== "database") return;
+        if (!active) return;
+        if (payload?.mode !== "database") { setSyncStatus("local"); return; }
         setStorageMode("database");
 
         if (!payload.found) {
-          await saveDatabaseState(stateRef.current);
+          await persistRemote(stateRef.current);
           return;
         }
 
         const remoteState = normalizeAppState(payload.state);
         if (stateRef.current.updatedAt > remoteState.updatedAt) {
-          await saveDatabaseState(stateRef.current);
+          await persistRemote(stateRef.current);
           return;
         }
 
         stateRef.current = remoteState;
-        saveLocalState(remoteState);
+        persistLocal(remoteState);
         setState(remoteState);
+        setSyncStatus("saved");
       })
-      .catch(() => undefined);
+      .catch(() => { if (active) setSyncStatus("error"); });
 
     return () => { active = false; };
-  }, []);
+  }, [persistLocal, persistRemote]);
 
   const commit = useCallback((update: (current: AppState) => AppState) => {
     const next = normalizeAppState({ ...update(stateRef.current), updatedAt: Date.now() });
     stateRef.current = next;
-    saveLocalState(next);
+    persistLocal(next);
     setState(next);
-    void saveDatabaseState(next)
-      .then((saved) => { if (saved) setStorageMode("database"); })
-      .catch(() => undefined);
-  }, []);
+    void persistRemote(next);
+  }, [persistLocal, persistRemote]);
 
   const toggleAcademyModule = useCallback((id: string) => {
     commit((current) => ({
@@ -133,10 +160,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     ...state,
     ready,
     storageMode,
+    syncStatus,
+    localStorageError,
     toggleAcademyModule,
     toggleTutorial,
     setOwnedGear,
-  }), [ready, setOwnedGear, state, storageMode, toggleAcademyModule, toggleTutorial]);
+  }), [ready, setOwnedGear, state, storageMode, syncStatus, localStorageError, toggleAcademyModule, toggleTutorial]);
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

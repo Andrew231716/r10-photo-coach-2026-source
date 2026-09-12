@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Box, Camera, SlidersHorizontal, Target, UserRound } from "lucide-react";
+import { ArrowRight, BookOpen, Box, Camera, SlidersHorizontal, UserRound } from "lucide-react";
+import { ProgressMissions } from "@/components/progress-missions";
+import { SaveStatus } from "@/components/save-status";
 import { DashboardAcademyCard, DashboardGearCard, DashboardStats } from "@/components/dashboard-state";
 import { ScenarioSearch } from "@/components/scenario-search";
 import { SectionHeading } from "@/components/section-heading";
@@ -50,16 +52,12 @@ export default function HomePage() {
       </section>
 
       <DashboardStats />
+      <SaveStatus />
 
       <div className="grid gap-6 xl:grid-cols-[1.45fr_1fr]">
         <DashboardAcademyCard />
 
-        <section className="premium-panel relative overflow-hidden border-[var(--signal)]/50 bg-[linear-gradient(135deg,rgba(240,179,35,.14),rgba(19,23,26,.98)_55%)] p-6 sm:p-7">
-          <div className="flex items-start justify-between"><span className="grid size-11 place-items-center rounded-full bg-[var(--signal)] text-[var(--ink)]"><Target size={20} aria-hidden="true" /></span><span className="font-mono text-xs text-[var(--signal)]">+120 XP</span></div>
-          <h2 className="font-display mt-5 text-2xl font-semibold">Missione del giorno</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Congela un salto a 1/1000 s, poi ripetilo a 1/250 s. Confronta mani, piedi e sfondo.</p>
-          <Link href="/tutorials/sport" className="mt-5 inline-flex min-h-11 items-center gap-2 bg-[var(--paper)] px-4 text-sm font-semibold text-[var(--ink)] transition hover:bg-white">Inizia missione <ArrowRight size={16} aria-hidden="true" /></Link>
-        </section>
+        <ProgressMissions />
       </div>
 
       <section>
