@@ -1,12 +1,13 @@
 "use client";
 
 import { Check, Clock3, LockKeyhole } from "lucide-react";
+import Link from "next/link";
 import { useAppState } from "@/components/app-state-provider";
 import { academyLevels } from "@/data/academy";
 import { getAcademyXp, totalAcademyModules, totalAcademyXp } from "@/lib/academy-metrics";
 
 export function AcademyProgress() {
-  const { academyCompleted: completed, ready, storageMode, toggleAcademyModule } = useAppState();
+  const { academyCompleted: completed, ready, storageMode } = useAppState();
   const percentage = Math.round((completed.length / totalAcademyModules) * 100);
   const xp = getAcademyXp(completed);
 
@@ -41,9 +42,9 @@ export function AcademyProgress() {
                     {locked ? (
                       <span className="flex min-h-10 items-center gap-2 border border-[var(--line)] px-3 text-xs text-[var(--muted)]"><LockKeyhole size={14} /> Livello {level.level - 1}</span>
                     ) : (
-                      <button onClick={() => toggleAcademyModule(module.id)} disabled={!ready} aria-pressed={complete} className={`flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition disabled:cursor-wait disabled:opacity-60 ${complete ? "border border-[var(--success)]/50 text-[var(--success)]" : "bg-[var(--paper)] text-[var(--ink)] hover:bg-white"}`}>
-                        <Check size={16} />{complete ? "Completato" : "Segna completato"}
-                      </button>
+                      <Link href={`/academy/${module.id}/`} aria-label={`${complete ? "Ripassa" : "Inizia lezione"}: ${module.title}`} className={`flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition ${complete ? "border border-[var(--success)]/50 text-[var(--success)]" : "bg-[var(--paper)] text-[var(--ink)] hover:bg-white"}`}>
+                        {complete && <Check size={16} />}{complete ? "Ripassa" : "Inizia lezione →"}
+                      </Link>
                     )}
                   </div>
                 );
