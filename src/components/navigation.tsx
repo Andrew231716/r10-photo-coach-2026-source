@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Aperture, BookOpen, Box, Camera, Home, LibraryBig, PackageOpen } from "lucide-react";
+import { Aperture, BookOpen, Box, Camera, Home, LibraryBig, PackageOpen, ScanSearch } from "lucide-react";
 
 const items = [
   { href: "/", label: "Dashboard", shortLabel: "Home", icon: Home },
   { href: "/academy", label: "Academy", shortLabel: "Academy", icon: BookOpen },
   { href: "/tutorials", label: "Guide di scatto", shortLabel: "Guide", icon: Camera },
+  { href: "/coach", label: "Analizza una foto", shortLabel: "Coach", icon: ScanSearch },
   { href: "/simulator", label: "Comandi fotocamera", shortLabel: "Comandi", icon: Box },
   { href: "/lenses", label: "Obiettivi", shortLabel: "Lenti", icon: Aperture },
   { href: "/gear", label: "Attrezzatura", shortLabel: "Kit", icon: PackageOpen },
@@ -50,7 +51,7 @@ export function MobileNavigation() {
 
   return (
     <nav aria-label="Navigazione mobile" className="fixed inset-x-0 bottom-0 z-[70] grid grid-cols-6 border-t border-[var(--line)] bg-[rgba(13,17,20,.97)] pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_35px_rgba(0,0,0,.35)] backdrop-blur-xl lg:hidden">
-      {items.map((item) => {
+      {items.filter((item) => item.href !== "/lenses").map((item) => {
         const active = isActive(pathname, item.href);
         const Icon = item.icon;
         return (

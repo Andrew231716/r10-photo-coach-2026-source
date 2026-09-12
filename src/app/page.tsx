@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Box, Camera, SlidersHorizontal, UserRound } from "lucide-react";
+import { ArrowRight, BookOpen, Box, Camera, ScanSearch, SlidersHorizontal, UserRound } from "lucide-react";
 import { ProgressMissions } from "@/components/progress-missions";
 import { SaveStatus } from "@/components/save-status";
 import { DashboardAcademyCard, DashboardGearCard, DashboardStats } from "@/components/dashboard-state";
@@ -35,11 +35,12 @@ export default function HomePage() {
           </div>
           <span className="text-sm text-[var(--muted)]">Un tocco e sei nel percorso giusto</span>
         </div>
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[
             { icon: BookOpen, title: "Voglio imparare", text: "Segui l’Academy in ordine, partendo dalle basi.", href: "/academy", action: "Apri Academy", tone: "var(--amber-glow)" },
             { icon: SlidersHorizontal, title: "Mi serve un setup", text: "Trova valori pronti per la scena che hai davanti.", href: "/tutorials", action: "Esplora le guide", tone: "var(--cyan-glow)" },
             { icon: Camera, title: "Mostrami i comandi", text: "Guarda dove premere direttamente sul modello 3D.", href: "/simulator", action: "Apri simulatore", tone: "rgba(124,205,145,.14)" },
+            { icon: ScanSearch, title: "Miglioro uno scatto", text: "Analizza luce e nitidezza senza caricare la foto online.", href: "/coach", action: "Apri Photo Coach", tone: "rgba(240,179,35,.12)" },
           ].map(({ icon: Icon, title, text, href, action, tone }) => (
             <Link key={title} href={href} className="action-card group min-h-48 p-5 transition hover:-translate-y-0.5 hover:border-[var(--line-strong)] sm:p-6" style={{ "--card-glow": tone } as React.CSSProperties}>
               <span className="grid size-11 place-items-center rounded-full border border-[var(--line-strong)] bg-white/[0.025] text-[var(--signal)]"><Icon size={20} aria-hidden="true" /></span>
