@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight, Check, MousePointer2, Move3D, Rotate3D, Search, Sparkles } from "lucide-react";
 import { CameraStage } from "@/components/camera-simulator/camera-stage";
 import { cameraControls, coachGuides, type CameraControlId, type CameraView } from "@/data/camera-controls";
@@ -33,8 +33,18 @@ export function CameraSimulator() {
   const [query, setQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
   const [finished, setFinished] = useState(false);
-  const [showModel, setShowModel] = useState(true);
+  const [showModel, setShowModel] = useState(false);
+  const [modelAvailable, setModelAvailable] = useState<boolean | null>(null);
   const [modelVersion, setModelVersion] = useState(0);
+
+  useEffect(() => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+    const available = Boolean(context);
+    setModelAvailable(available);
+    setShowModel(available);
+    context?.getExtension("WEBGL_lose_context")?.loseContext();
+  }, []);
 
   const activeControl = controlsById.get(activeId) ?? cameraControls[0];
   const guide = guidesById.get(guideId) ?? coachGuides[0];
@@ -71,9 +81,9 @@ export function CameraSimulator() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" onClick={() => setShowModel((current) => !current)} aria-pressed={!showModel} className="min-h-11 border border-[var(--line)] px-4 text-sm">{showModel ? "Usa solo le istruzioni" : "Mostra modello 3D"}</button>
+        <button type="button" onClick={() => setShowModel((current) => !current)} disabled={!modelAvailable} aria-pressed={!showModel} className="min-h-11 border border-[var(--line)] px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50">{modelAvailable === null ? "Controllo compatibilità 3D…" : !modelAvailable ? "3D non disponibile su questo dispositivo" : showModel ? "Usa solo le istruzioni" : "Mostra modello 3D"}</button>
         {showModel ? <button type="button" onClick={() => { setView("perspective"); setModelVersion((current) => current + 1); }} className="min-h-11 border border-[var(--line)] px-4 text-sm">Ripristina vista e zoom</button> : null}
-        <p className="text-xs text-[var(--muted)]">Modello schematico: non è una replica completa dei menu Canon.</p>
+        <p className="text-xs text-[var(--muted)]">{modelAvailable === false ? "Puoi seguire comunque tutte le istruzioni passo passo." : "Modello schematico: non è una replica completa dei menu Canon."}</p>
       </div>
       <section className="grid gap-px border border-[var(--line)] bg-[var(--line)] sm:grid-cols-3" aria-label="Come usare il simulatore">
         {[
