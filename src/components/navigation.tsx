@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Aperture, BookOpen, Box, Camera, Home, LibraryBig, PackageOpen, ScanSearch } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const items = [
   { href: "/", label: "Home", shortLabel: "Home", icon: Home },
@@ -76,6 +77,7 @@ export function MobileNavigation() {
 export function SidebarUtilityLinks() {
   return (
     <div className="mt-auto space-y-2 px-4 pb-6 pt-8">
+      <ThemeToggle variant="row" />
       <div className="border border-[var(--chrome-line)] bg-white/[0.02] p-4">
         <div className="flex items-center gap-2 text-sm text-[var(--chrome-paper)]">
           <LibraryBig size={17} className="text-[#55d4c6]" aria-hidden="true" />

@@ -1,13 +1,13 @@
-const CACHE = "r10-photo-coach-v8";
+const CACHE = "r10-photo-coach-v9";
 const CORE = [
   "/",
-  "/academy",
-  "/tutorials",
-  "/coach",
-  "/simulator",
-  "/lenses",
-  "/gear",
-  "/profile",
+  "/academy/",
+  "/tutorials/",
+  "/coach/",
+  "/simulator/",
+  "/lenses/",
+  "/gear/",
+  "/profile/",
   "/manifest.webmanifest",
   "/icons/icon.svg",
   "/icons/icon-192.png",
@@ -43,16 +43,26 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
+function isOpaqueAsset(url) {
+  return (
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname.startsWith("/icons/") ||
+    url.pathname === "/hero-golden-hour.webp" ||
+    url.pathname === "/manifest.webmanifest"
+  );
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin || url.pathname.startsWith("/api/")) return;
 
-  if (event.request.mode === "navigate") {
+  // Always network-first for documents and JS/CSS so deploys are not stuck on stale bundles.
+  if (event.request.mode === "navigate" || url.pathname.startsWith("/_next/") || url.pathname.endsWith(".js") || url.pathname.endsWith(".css")) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          if (response.ok) {
+          if (response.ok && event.request.mode === "navigate") {
             const copy = response.clone();
             event.waitUntil(caches.open(CACHE).then((cache) => cache.put(event.request, copy)));
           }
@@ -60,6 +70,11 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/")))
     );
+    return;
+  }
+
+  if (!isOpaqueAsset(url)) {
+    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
     return;
   }
 

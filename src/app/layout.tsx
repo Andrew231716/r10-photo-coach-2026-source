@@ -71,13 +71,17 @@ export const viewport: Viewport = {
 const themeBootScript = `
 (() => {
   try {
-    const theme = localStorage.getItem("r10-theme");
-    const resolved = theme === "light" ? "light" : "dark";
-    document.documentElement.dataset.theme = resolved;
-    document.documentElement.style.colorScheme = resolved;
+    const theme = localStorage.getItem("r10-theme") === "light" ? "light" : "dark";
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    root.classList.toggle("theme-light", theme === "light");
+    root.classList.toggle("theme-dark", theme === "dark");
+    root.style.colorScheme = theme;
   } catch (_) {
-    document.documentElement.dataset.theme = "dark";
-    document.documentElement.style.colorScheme = "dark";
+    const root = document.documentElement;
+    root.dataset.theme = "dark";
+    root.classList.add("theme-dark");
+    root.style.colorScheme = "dark";
   }
 })();
 `;

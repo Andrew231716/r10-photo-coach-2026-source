@@ -34,7 +34,8 @@ html[data-theme="dark"] {
   --chrome-ink: #070809;
 }
 
-html[data-theme="light"] {
+html[data-theme="light"],
+html.theme-light {
   --ink: #dfe7ee;
   --carbon: #d0dae3;
   --panel: #ffffff;
@@ -71,7 +72,8 @@ html {
   scroll-behavior: smooth;
 }
 
-html[data-theme="light"] {
+html[data-theme="light"],
+html.theme-light {
   color-scheme: light;
 }
 

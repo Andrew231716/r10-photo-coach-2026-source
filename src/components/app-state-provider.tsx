@@ -76,8 +76,12 @@ async function saveDatabaseState(state: AppState) {
 }
 
 function applyTheme(theme: ThemePreference) {
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.colorScheme = theme;
+  const root = document.documentElement;
+  root.dataset.theme = theme;
+  root.classList.toggle("theme-light", theme === "light");
+  root.classList.toggle("theme-dark", theme === "dark");
+  root.style.colorScheme = theme;
+  try { localStorage.setItem("r10-theme", theme); } catch { /* ignore */ }
 }
 
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
