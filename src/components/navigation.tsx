@@ -8,7 +8,7 @@ const items = [
   { href: "/", label: "Dashboard", shortLabel: "Home", icon: Home },
   { href: "/academy", label: "Academy", shortLabel: "Academy", icon: BookOpen },
   { href: "/tutorials", label: "Guide di scatto", shortLabel: "Guide", icon: Camera },
-  { href: "/coach", label: "Analizza una foto", shortLabel: "Coach", icon: ScanSearch },
+  { href: "/coach", label: "Photo Coach", shortLabel: "Coach", icon: ScanSearch },
   { href: "/simulator", label: "Comandi fotocamera", shortLabel: "Comandi", icon: Box },
   { href: "/lenses", label: "Obiettivi", shortLabel: "Lenti", icon: Aperture },
   { href: "/gear", label: "Attrezzatura", shortLabel: "Kit", icon: PackageOpen },
@@ -77,10 +77,10 @@ export function SidebarUtilityLinks() {
       <div className="border border-[var(--line)] bg-white/[0.02] p-4">
         <div className="flex items-center gap-2 text-sm text-[var(--paper)]">
           <LibraryBig size={17} className="text-[var(--cyan)]" aria-hidden="true" />
-          <span>Coach + simulatore</span>
+          <span>Coach, guide e alert</span>
         </div>
         <p className="mt-2 text-[0.78rem] leading-5 text-[var(--muted)]">
-          Academy, guide, comandi 3D e analisi foto privata sul dispositivo. I progressi restano sul telefono e si sincronizzano se Neon è collegato.
+          Academy, chat coach, analisi privata, simulatore 3D e promemoria pratica. I progressi restano sul telefono e si sincronizzano se Neon è collegato.
         </p>
       </div>
     </div>

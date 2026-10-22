@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { DesktopNavigation, MobileNavigation, SidebarUtilityLinks } from "@/components/navigation";
+import { NotificationCenter } from "@/components/notification-center";
 import { PwaRegister } from "@/components/pwa-register";
 import { AppStateProvider } from "@/components/app-state-provider";
 import { ProfileBadge } from "@/components/profile-badge";
@@ -32,9 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link href="/tutorials" className="hidden min-h-10 items-center gap-2 border border-[var(--line)] bg-white/[0.02] px-3 text-sm text-[var(--muted)] transition hover:border-[var(--line-strong)] hover:text-[var(--paper)] sm:flex">
                 <Search size={16} aria-hidden="true" /> Cerca un tutorial
               </Link>
-              <button type="button" disabled aria-label="Notifiche, prossimamente" title="Notifiche disponibili nella Fase 4" className="hidden size-10 cursor-not-allowed place-items-center border border-[var(--line)] text-[var(--muted)] opacity-60 sm:grid">
-                <Bell size={18} aria-hidden="true" />
-              </button>
+              <div className="hidden sm:block"><NotificationCenter /></div>
               <ProfileBadge />
             </div>
           </div>
