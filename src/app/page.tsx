@@ -14,14 +14,14 @@ export default function HomePage() {
   const searchItems = tutorials.map(({ slug, title, category, summary }) => ({ slug, title, category, summary }));
   return (
     <div className="space-y-9 sm:space-y-12">
-      <section className="animate-rise relative min-h-[440px] overflow-hidden border border-[var(--line-strong)] bg-[var(--panel)] shadow-[0_30px_90px_rgba(0,0,0,.32)] sm:min-h-[500px]">
+      <section className="hero-stage animate-rise relative min-h-[440px] overflow-hidden border border-[#3b444b] bg-[#13171a] shadow-[0_30px_90px_rgba(0,0,0,.32)] sm:min-h-[500px]">
         <Image src="/hero-golden-hour.webp" alt="Fotografo che realizza un ritratto al tramonto sulla costa" fill priority sizes="(max-width: 1024px) 100vw, 75vw" className="object-cover object-[62%_center] saturate-[.88] contrast-[1.08]" />
         <div className="hero-vignette absolute inset-0" />
         <div className="surface-grid absolute inset-0 opacity-40" />
         <div className="relative z-10 flex min-h-[440px] max-w-3xl flex-col justify-end p-5 sm:min-h-[500px] sm:p-10 lg:p-12">
-          <div className="mb-auto flex w-fit items-center gap-2 border border-[var(--signal)]/40 bg-black/45 px-3 py-2 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-[var(--signal-strong)] backdrop-blur"><span className="size-2 rounded-full bg-[var(--signal)] shadow-[0_0_12px_var(--signal)]" /> 23 guide pronte</div>
-          <p className="mb-2 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[var(--cyan)]">Il tuo coach sul campo</p>
-          <h1 className="font-display max-w-2xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Cosa vuoi fotografare?</h1>
+          <div className="mb-auto flex w-fit items-center gap-2 border border-[#f0b323]/40 bg-black/45 px-3 py-2 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-[#ffd157] backdrop-blur"><span className="size-2 rounded-full bg-[#f0b323] shadow-[0_0_12px_#f0b323]" /> 23 guide pronte</div>
+          <p className="mb-2 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-[#55d4c6]">Il tuo coach sul campo</p>
+          <h1 className="font-display max-w-2xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-5xl lg:text-6xl">Cosa vuoi fotografare?</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-white/78 sm:text-base sm:leading-7">Ti mostro subito impostazioni, obiettivo e comandi da usare sulla tua EOS R10.</p>
           <ScenarioSearch items={searchItems} />
         </div>

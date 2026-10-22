@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
+import Script from "next/script";
 import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
@@ -67,10 +68,27 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+const themeBootScript = `
+(() => {
+  try {
+    const theme = localStorage.getItem("r10-theme");
+    const resolved = theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.style.colorScheme = resolved;
+  } catch (_) {
+    document.documentElement.dataset.theme = "dark";
+    document.documentElement.style.colorScheme = "dark";
+  }
+})();
+`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="it" className={`${display.variable} ${sans.variable}`}>
+    <html lang="it" className={`${display.variable} ${sans.variable}`} data-theme="dark" suppressHydrationWarning>
       <body>
+        <Script id="theme-boot" strategy="beforeInteractive">
+          {themeBootScript}
+        </Script>
         <AppShell>{children}</AppShell>
       </body>
     </html>

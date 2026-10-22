@@ -116,7 +116,7 @@ export function NotificationCenter() {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="relative grid size-10 place-items-center border border-[var(--line)] text-[var(--muted)] transition hover:border-[var(--line-strong)] hover:text-[var(--paper)]"
+        className="relative grid size-10 place-items-center border border-[var(--chrome-line)] text-[var(--chrome-muted)] transition hover:border-[var(--chrome-line-strong)] hover:text-[var(--chrome-paper)]"
       >
         <Bell size={18} aria-hidden="true" />
         {unread ? (
