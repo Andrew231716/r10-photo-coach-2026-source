@@ -2,6 +2,13 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useAppState } from "@/components/app-state-provider";
+import type { ThemePreference } from "@/lib/app-state";
+
+function paintTheme(theme: ThemePreference) {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+  try { localStorage.setItem("r10-theme", theme); } catch { /* ignore */ }
+}
 
 export function ThemeToggle() {
   const { ready, theme, setTheme } = useAppState();
@@ -13,8 +20,11 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      onClick={() => setTheme(next)}
-      className="grid size-10 place-items-center border border-[var(--chrome-line)] text-[var(--chrome-muted)] transition hover:border-[var(--chrome-line-strong)] hover:text-[var(--chrome-paper)]"
+      onClick={() => {
+        paintTheme(next);
+        setTheme(next);
+      }}
+      className="relative z-[80] grid size-10 place-items-center border border-[var(--chrome-line)] text-[var(--chrome-muted)] transition hover:border-[var(--chrome-line-strong)] hover:text-[var(--chrome-paper)]"
       aria-label={theme === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro"}
       title={theme === "dark" ? "Tema chiaro" : "Tema scuro"}
       aria-pressed={theme === "light"}

@@ -35,18 +35,41 @@ export function AcademyProgress() {
               {level.modules.map((module, index) => {
                 const complete = completed.includes(module.id);
                 const locked = !levelUnlocked;
-                return (
-                  <div key={module.id} className={`grid gap-4 p-5 sm:grid-cols-[2rem_1fr_auto] sm:items-center ${locked ? "opacity-65" : ""}`}>
+                const content = (
+                  <>
                     <span className="font-mono text-xs text-[var(--muted)]">{String(index + 1).padStart(2, "0")}</span>
-                    <div><h3 className="font-display text-lg font-semibold">{module.title}</h3><p className="mt-1 text-sm leading-6 text-[var(--muted)]">{module.description}</p><div className="mt-2 flex gap-3 text-xs text-[var(--muted)]"><span className="flex items-center gap-1"><Clock3 size={13} />{module.duration} min</span><span>{module.lessonCount} lezioni</span></div></div>
+                    <div>
+                      <h3 className="font-display text-lg font-semibold">{module.title}</h3>
+                      <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{module.description}</p>
+                      <div className="mt-2 flex gap-3 text-xs text-[var(--muted)]">
+                        <span className="flex items-center gap-1"><Clock3 size={13} aria-hidden="true" />{module.duration} min</span>
+                        <span>{module.lessonCount} lezioni</span>
+                      </div>
+                    </div>
                     {locked ? (
-                      <span className="flex min-h-10 items-center gap-2 border border-[var(--line)] px-3 text-xs text-[var(--muted)]"><LockKeyhole size={14} /> Livello {level.level - 1}</span>
+                      <span className="flex min-h-10 items-center gap-2 border border-[var(--line)] px-3 text-xs text-[var(--muted)]"><LockKeyhole size={14} aria-hidden="true" /> Livello {level.level - 1}</span>
                     ) : (
-                      <Link href={`/academy/${module.id}/`} aria-label={`${complete ? "Ripassa" : "Inizia lezione"}: ${module.title}`} className={`inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition ${complete ? "border border-[var(--success)]/50 text-[var(--success)] hover:bg-[var(--success)]/10" : "bg-[var(--signal)] text-[var(--ink)] hover:bg-[var(--signal-strong)]"}`}>
-                        {complete && <Check size={16} aria-hidden="true" />}{complete ? "Ripassa" : "Inizia lezione →"}
-                      </Link>
+                      <span className={`inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold ${complete ? "border border-[var(--success)]/50 text-[var(--success)]" : "bg-[var(--signal)] text-[var(--ink)]"}`}>
+                        {complete ? <Check size={16} aria-hidden="true" /> : null}
+                        {complete ? "Ripassa" : "Inizia lezione →"}
+                      </span>
                     )}
+                  </>
+                );
+
+                return locked ? (
+                  <div key={module.id} className="grid gap-4 p-5 opacity-65 sm:grid-cols-[2rem_1fr_auto] sm:items-center">
+                    {content}
                   </div>
+                ) : (
+                  <Link
+                    key={module.id}
+                    href={`/academy/${module.id}/`}
+                    aria-label={`${complete ? "Ripassa" : "Inizia lezione"}: ${module.title}`}
+                    className="grid gap-4 p-5 transition hover:bg-white/[0.03] sm:grid-cols-[2rem_1fr_auto] sm:items-center"
+                  >
+                    {content}
+                  </Link>
                 );
               })}
             </div>

@@ -134,8 +134,10 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         }
 
         const remoteState = normalizeAppState(payload.state);
-        if (stateRef.current.updatedAt > remoteState.updatedAt) {
+        // Prefer newer local edits (theme/onboarding/progress) over a stale remote snapshot.
+        if (stateRef.current.updatedAt >= remoteState.updatedAt && stateRef.current.updatedAt > 0) {
           await persistRemote(stateRef.current);
+          setSyncStatus("saved");
           return;
         }
 

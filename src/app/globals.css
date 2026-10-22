@@ -35,24 +35,32 @@ html[data-theme="dark"] {
 }
 
 html[data-theme="light"] {
-  --ink: #e8edf1;
-  --carbon: #dde5eb;
+  --ink: #dfe7ee;
+  --carbon: #d0dae3;
   --panel: #ffffff;
-  --panel-raised: #f3f7fa;
-  --line: #c5d0d8;
-  --line-strong: #94a3ad;
+  --panel-raised: #f2f6f9;
+  --line: #b7c4ce;
+  --line-strong: #8494a0;
   --paper: #12161a;
-  --muted: #4f5b64;
+  --muted: #4a5660;
   --signal: #9a6b00;
   --signal-strong: #7a5200;
   --cyan: #0f766e;
   --danger: #b42318;
   --success: #16794c;
-  --amber-glow: rgba(154, 107, 0, 0.14);
-  --cyan-glow: rgba(15, 118, 110, 0.1);
-  --page-glow-a: rgba(154, 107, 0, 0.1);
-  --page-glow-b: rgba(15, 118, 110, 0.08);
-  --page-fade: #eef3f6;
+  --amber-glow: rgba(154, 107, 0, 0.16);
+  --cyan-glow: rgba(15, 118, 110, 0.12);
+  --page-glow-a: rgba(154, 107, 0, 0.14);
+  --page-glow-b: rgba(15, 118, 110, 0.1);
+  --page-fade: #e7eef4;
+  --chrome-bg: rgba(13, 17, 20, 0.97);
+  --chrome-solid: #0d0f11;
+  --chrome-line: #2a3035;
+  --chrome-line-strong: #3b444b;
+  --chrome-paper: #f3f0e8;
+  --chrome-muted: #9aa3a9;
+  --chrome-signal: #f0b323;
+  --chrome-ink: #070809;
 }
 
 * { box-sizing: border-box; }
