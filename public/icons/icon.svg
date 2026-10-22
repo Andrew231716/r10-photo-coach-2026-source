@@ -1,7 +1,70 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#070809"/>
-  <circle cx="256" cy="256" r="178" fill="none" stroke="#2a3035" stroke-width="20"/>
-  <circle cx="256" cy="256" r="126" fill="none" stroke="#f0b323" stroke-width="12"/>
-  <path d="M148 176h90c47 0 76 24 76 65 0 28-15 49-40 59l57 72h-63l-48-63h-18v63h-54V176Zm54 45v47h32c18 0 28-9 28-24 0-15-10-23-28-23h-32Z" fill="#f3f0e8"/>
-  <path d="M340 176h41v196h-54V234l-35 18-20-41 68-35Z" fill="#f3f0e8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="R10 Photo Coach">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="32" x2="448" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#151a1e"/>
+      <stop offset="1" stop-color="#070809"/>
+    </linearGradient>
+    <linearGradient id="body" x1="110" y1="150" x2="400" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3a4249"/>
+      <stop offset="0.4" stop-color="#1c2227"/>
+      <stop offset="1" stop-color="#0d1013"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="340" y1="200" x2="430" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4a535b"/>
+      <stop offset="1" stop-color="#14181c"/>
+    </linearGradient>
+    <radialGradient id="glass" cx="208" cy="286" r="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9af0e6"/>
+      <stop offset="0.28" stop-color="#3eb8ab"/>
+      <stop offset="0.62" stop-color="#17343a"/>
+      <stop offset="1" stop-color="#070809"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="140" y1="220" x2="280" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="0.5" stop-color="#f0b323"/>
+      <stop offset="1" stop-color="#a87400"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="118" fill="url(#bg)"/>
+  <circle cx="402" cy="96" r="96" fill="#f0b323" opacity=".10"/>
+  <circle cx="84" cy="420" r="120" fill="#55d4c6" opacity=".08"/>
+
+  <!-- body silhouette inspired by EOS R10 -->
+  <path fill="url(#body)" d="M108 196c0-26 18-44 44-48l42-6c12-2 22-12 28-22 12-18 32-28 54-28h72c22 0 40 12 50 32l8 16c6 12 18 20 32 20h18c28 0 50 22 50 50v128c0 34-28 62-62 62H170c-34 0-62-28-62-62V196Z"/>
+
+  <!-- chunky grip -->
+  <path fill="url(#grip)" d="M336 220c22-8 52-4 70 14 12 12 18 28 18 46v84c0 28-20 50-48 54-18 2-36-6-46-20l-18-28c-10-16-12-36-6-54l12-48c4-18 10-34 18-48Z"/>
+  <path fill="#0a0c0e" opacity=".35" d="M352 246c12-4 28-2 38 8 8 8 12 18 12 30v62c0 14-10 26-24 28-12 2-24-4-30-14l-12-18c-6-12-8-26-4-38l8-34c2-12 6-22 12-24Z"/>
+
+  <!-- top controls: mode dial left, shutter on grip -->
+  <rect x="154" y="126" width="78" height="40" rx="14" fill="#22282e"/>
+  <circle cx="193" cy="146" r="18" fill="#0d1013" stroke="url(#gold)" stroke-width="4"/>
+  <circle cx="193" cy="146" r="6" fill="#f0b323"/>
+  <path d="M193 132v6M193 154v6M179 146h6M201 146h6" stroke="#f3f0e8" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+
+  <rect x="246" y="134" width="58" height="20" rx="7" fill="#12171b"/>
+  <rect x="256" y="140" width="28" height="8" rx="3" fill="#55d4c6" opacity=".8"/>
+
+  <!-- hot shoe -->
+  <rect x="250" y="108" width="58" height="16" rx="4" fill="#2a3035"/>
+  <rect x="262" y="112" width="34" height="8" rx="2" fill="#3b444b"/>
+
+  <!-- shutter button -->
+  <circle cx="392" cy="178" r="14" fill="#f0b323"/>
+  <circle cx="392" cy="178" r="7" fill="#fff3c4"/>
+
+  <!-- RF lens -->
+  <circle cx="208" cy="286" r="98" fill="#101418"/>
+  <circle cx="208" cy="286" r="84" fill="none" stroke="url(#gold)" stroke-width="12"/>
+  <circle cx="208" cy="286" r="70" fill="#0b0d10" stroke="#2f373e" stroke-width="5"/>
+  <circle cx="208" cy="286" r="56" fill="url(#glass)"/>
+  <path d="M176 254c22-18 56-20 82-2" fill="none" stroke="#e9fffb" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+  <circle cx="232" cy="308" r="9" fill="#55d4c6" opacity=".28"/>
+
+  <!-- AF assist lamp -->
+  <circle cx="318" cy="222" r="7" fill="#f0b323"/>
+
+  <!-- subtle R10 cue mark -->
+  <path d="M140 378h232" stroke="#f0b323" stroke-width="5" stroke-linecap="round" opacity=".5"/>
 </svg>

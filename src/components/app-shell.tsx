@@ -11,8 +11,13 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export function Brand() {
   return (
     <Link href="/" className="flex min-w-0 shrink items-center gap-2.5 sm:gap-3" aria-label="R10 Photo Coach, dashboard">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full border border-[var(--signal)] font-mono text-xs font-semibold text-[var(--signal)]">R10</span>
-      <span className="whitespace-nowrap font-display text-base font-semibold tracking-[-0.02em] sm:text-[1.05rem]">Photo <span className="text-[var(--signal)]">Coach</span></span>
+      <span className="relative size-10 shrink-0 overflow-hidden rounded-[0.7rem] border border-[var(--line-strong)] bg-[var(--ink)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icons/icon-192.png" alt="" width={40} height={40} className="size-full object-cover" />
+      </span>
+      <span className="whitespace-nowrap font-display text-base font-semibold tracking-[-0.02em] sm:text-[1.05rem]">
+        R10 <span className="text-[var(--signal)]">Photo Coach</span>
+      </span>
     </Link>
   );
 }

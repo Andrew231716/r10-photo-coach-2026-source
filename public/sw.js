@@ -1,4 +1,4 @@
-const CACHE = "r10-photo-coach-v7";
+const CACHE = "r10-photo-coach-v8";
 const CORE = [
   "/",
   "/academy",
