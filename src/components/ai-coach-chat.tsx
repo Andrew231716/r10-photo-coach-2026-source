@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
 import { LoaderCircle, MessageSquareText, SendHorizontal, Sparkles } from "lucide-react";
+import { apiPath } from "@/lib/api";
 
 type ChatItem = {
   role: "user" | "assistant";
@@ -22,7 +23,7 @@ export function AiCoachChat() {
   const [messages, setMessages] = useState<ChatItem[]>([
     {
       role: "assistant",
-      content: "Chiedimi impostazioni, procedure o scenari per la EOS R10. Uso Academy, guide e simulatore dell’app; se OPENAI_API_KEY è configurata sul server, riformulo in modo più conversazionale.",
+      content: "Chiedimi impostazioni, procedure o scenari per la EOS R10. Rispondo subito usando Academy, guide e simulatore dell’app — gratis, senza caricare foto.",
       mode: "local",
     },
   ]);
@@ -41,7 +42,7 @@ export function AiCoachChat() {
     setMessages((current) => [...current, { role: "user", content: cleaned }]);
 
     try {
-      const response = await fetch("/api/coach", {
+      const response = await fetch(apiPath("/api/coach"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: cleaned, history }),
@@ -52,15 +53,16 @@ export function AiCoachChat() {
         answer?: string;
         mode?: "local" | "openai";
         sources?: ChatItem["sources"];
+        error?: string;
       };
-      if (!data.answer) throw new Error("empty");
+      if (!data.answer) throw new Error(data.error || "empty");
       setMessages((current) => [
         ...current,
         { role: "assistant", content: data.answer!, mode: data.mode ?? "local", sources: data.sources ?? [] },
       ]);
       queueMicrotask(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }));
     } catch {
-      setError("Il coach non ha risposto. Riprova tra poco.");
+      setError("Il coach non ha risposto. Controlla la connessione e riprova.");
       setMessages((current) => current.slice(0, -1));
       setInput(cleaned);
     } finally {

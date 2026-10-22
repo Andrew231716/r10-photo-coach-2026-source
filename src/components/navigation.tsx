@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Aperture, BookOpen, Box, Camera, Home, LibraryBig, PackageOpen, ScanSearch } from "lucide-react";
 
 const items = [
-  { href: "/", label: "Dashboard", shortLabel: "Home", icon: Home },
+  { href: "/", label: "Home", shortLabel: "Home", icon: Home },
   { href: "/academy", label: "Academy", shortLabel: "Academy", icon: BookOpen },
   { href: "/tutorials", label: "Guide di scatto", shortLabel: "Guide", icon: Camera },
   { href: "/coach", label: "Photo Coach", shortLabel: "Coach", icon: ScanSearch },

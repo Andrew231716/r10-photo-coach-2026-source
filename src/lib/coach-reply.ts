@@ -36,7 +36,7 @@ function localAnswer(question: string, matches: Array<CoachSource & { score: num
     lines.push(`Altre risorse collegate: ${extras.map((item) => `${item.title} (${item.href})`).join("; ")}.`);
   }
 
-  lines.push("Queste risposte usano solo i contenuti didattici dell’app. Se configuri OPENAI_API_KEY, il coach può riformulare la stessa base con un tono più conversazionale.");
+  lines.push("Risposta basata sui contenuti didattici dell’app (Academy, guide e simulatore).");
   return lines.join("\n\n");
 }
 

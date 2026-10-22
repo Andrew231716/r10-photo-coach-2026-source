@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Aperture } from "lucide-react";
+import { apiPath } from "@/lib/api";
 
 export function ProfileBadge() {
   const [name, setName] = useState("Profilo");
 
   useEffect(() => {
     let active = true;
-    void fetch("/api/account", { cache: "no-store" })
+    void fetch(apiPath("/api/account"), { cache: "no-store" })
       .then((response) => response.ok ? response.json() as Promise<{ account?: { displayName?: string } }> : null)
       .then((payload) => { if (active && payload?.account?.displayName) setName(payload.account.displayName); })
       .catch(() => undefined);

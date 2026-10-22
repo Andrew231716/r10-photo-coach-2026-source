@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Check, Copy, Database, KeyRound, LogIn, LogOut, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { useAppState } from "@/components/app-state-provider";
+import { apiPath } from "@/lib/api";
 
 type Account = { id: string; displayName: string; lastSyncedAt?: string | null };
 
@@ -19,7 +20,7 @@ export function ProfileManager() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
   useEffect(() => {
-    void fetch("/api/account", { cache: "no-store" })
+    void fetch(apiPath("/api/account"), { cache: "no-store" })
       .then(async (response) => response.json() as Promise<{ mode?: "local" | "database"; account?: Account | null }>)
       .then((payload) => { setMode(payload.mode ?? "local"); setAccount(payload.account ?? null); })
       .catch(() => setMode("local"));
@@ -29,7 +30,7 @@ export function ProfileManager() {
     setBusy(true);
     setMessage("");
     try {
-      const response = await fetch("/api/account", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const response = await fetch(apiPath("/api/account"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const payload = await response.json() as { error?: string; displayName?: string; syncCode?: string };
       if (!response.ok) throw new Error(payload.error === "invalid_sync_code" ? "Codice non riconosciuto." : "Sincronizzazione non disponibile.");
       return payload;

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { apiPath } from "@/lib/api";
 import { defaultAppState, normalizeAppState, withPracticeStreak, type AppState, type ThemePreference } from "@/lib/app-state";
 
 type StorageMode = "local" | "database";
@@ -65,7 +66,7 @@ function saveLocalState(state: AppState) {
 }
 
 async function saveDatabaseState(state: AppState) {
-  const response = await fetch("/api/state", {
+  const response = await fetch(apiPath("/api/state"), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ state }),
@@ -117,7 +118,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     applyTheme(localState.theme);
     setReady(true);
 
-    void fetch("/api/state", { cache: "no-store", signal: AbortSignal.timeout(15000) })
+    void fetch(apiPath("/api/state"), { cache: "no-store", signal: AbortSignal.timeout(15000) })
       .then(async (response) => {
         if (!response.ok) throw new Error("sync_unavailable");
         return response.json() as Promise<{ mode?: string; found?: boolean; state?: unknown }>;

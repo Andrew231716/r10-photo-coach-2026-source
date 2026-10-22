@@ -42,8 +42,8 @@ export function AcademyProgress() {
                     {locked ? (
                       <span className="flex min-h-10 items-center gap-2 border border-[var(--line)] px-3 text-xs text-[var(--muted)]"><LockKeyhole size={14} /> Livello {level.level - 1}</span>
                     ) : (
-                      <Link href={`/academy/${module.id}/`} aria-label={`${complete ? "Ripassa" : "Inizia lezione"}: ${module.title}`} className={`flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition ${complete ? "border border-[var(--success)]/50 text-[var(--success)]" : "bg-[var(--paper)] text-[var(--ink)] hover:bg-white"}`}>
-                        {complete && <Check size={16} />}{complete ? "Ripassa" : "Inizia lezione →"}
+                      <Link href={`/academy/${module.id}/`} aria-label={`${complete ? "Ripassa" : "Inizia lezione"}: ${module.title}`} className={`inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition ${complete ? "border border-[var(--success)]/50 text-[var(--success)] hover:bg-[var(--success)]/10" : "bg-[var(--signal)] text-[var(--ink)] hover:bg-[var(--signal-strong)]"}`}>
+                        {complete && <Check size={16} aria-hidden="true" />}{complete ? "Ripassa" : "Inizia lezione →"}
                       </Link>
                     )}
                   </div>

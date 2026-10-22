@@ -27,12 +27,17 @@ export function Onboarding() {
   if (!ready || onboardingDone) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-end bg-black/70 p-4 sm:place-items-center" role="presentation">
+    <div
+      className="fixed inset-0 z-[100] grid place-items-end bg-black/70 p-4 sm:place-items-center"
+      role="presentation"
+      onClick={completeOnboarding}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         className="w-full max-w-lg border border-[var(--line-strong)] bg-[var(--carbon)] p-5 shadow-[0_30px_90px_rgba(0,0,0,.55)] sm:p-7"
+        onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
           <div>

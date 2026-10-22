@@ -17,6 +17,7 @@ export function ThemeToggle() {
       className="grid size-10 place-items-center border border-[var(--chrome-line)] text-[var(--chrome-muted)] transition hover:border-[var(--chrome-line-strong)] hover:text-[var(--chrome-paper)]"
       aria-label={theme === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro"}
       title={theme === "dark" ? "Tema chiaro" : "Tema scuro"}
+      aria-pressed={theme === "light"}
     >
       {theme === "dark" ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
     </button>
