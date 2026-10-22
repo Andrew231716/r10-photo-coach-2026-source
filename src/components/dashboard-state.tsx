@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, Camera, Check, Layers3, PackageCheck, Zap } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Camera, Check, Flame, Layers3, Zap } from "lucide-react";
 import { useAppState } from "@/components/app-state-provider";
 import { ProgressRing } from "@/components/progress-ring";
 import { academyLevels } from "@/data/academy";
@@ -10,13 +10,13 @@ import { tutorials } from "@/data/tutorials";
 import { getAcademyXp, totalAcademyModules } from "@/lib/academy-metrics";
 
 export function DashboardStats() {
-  const { academyCompleted, tutorialsCompleted, ownedGear } = useAppState();
+  const { academyCompleted, tutorialsCompleted, streakDays } = useAppState();
   const xp = getAcademyXp(academyCompleted) + tutorialsCompleted.length * 80;
   const stats = [
     { value: xp.toLocaleString("it-IT"), label: "XP accumulati", icon: Zap },
     { value: `${tutorialsCompleted.length} / ${tutorials.length}`, label: "tutorial completati", icon: BookOpenCheck },
     { value: `${academyCompleted.length} / ${totalAcademyModules}`, label: "moduli Academy", icon: Layers3 },
-    { value: String(ownedGear.length), label: "elementi nel kit", icon: PackageCheck },
+    { value: String(streakDays), label: streakDays === 1 ? "giorno di streak" : "giorni di streak", icon: Flame },
   ];
 
   return (

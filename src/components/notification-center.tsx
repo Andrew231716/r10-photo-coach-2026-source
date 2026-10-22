@@ -26,6 +26,7 @@ export function NotificationCenter() {
   const [status, setStatus] = useState("");
   const panelId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!ready) return;
@@ -41,11 +42,31 @@ export function NotificationCenter() {
 
   useEffect(() => {
     if (!open) return;
+    const panel = rootRef.current;
+    const focusables = panel
+      ? Array.from(panel.querySelectorAll<HTMLElement>("button, a[href], input, [tabindex]:not([tabindex='-1'])"))
+      : [];
+    focusables[0]?.focus();
+
     const onPointer = (event: MouseEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+        buttonRef.current?.focus();
+        return;
+      }
+      if (event.key !== "Tab" || focusables.length < 2) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("mousedown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -89,6 +110,7 @@ export function NotificationCenter() {
   return (
     <div ref={rootRef} className="relative">
       <button
+        ref={buttonRef}
         type="button"
         aria-label={unread ? `Notifiche, ${unread} non lette` : "Notifiche"}
         aria-expanded={open}

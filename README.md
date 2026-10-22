@@ -4,7 +4,7 @@ Scuola fotografica digitale interattiva dedicata alla Canon EOS R10.
 
 ## Stato
 
-Dashboard, Academy a cinque livelli, 23 tutorial, catalogo obiettivi, profilo attrezzatura, PWA, simulatore EOS R10, Photo Coach (analisi privata + chat knowledge-base), notifiche in-app con promemoria pratica e sincronizzazione Neon quando `DATABASE_URL` è disponibile.
+Dashboard, Academy a cinque livelli, 23 tutorial, catalogo obiettivi, profilo attrezzatura, PWA, simulatore EOS R10 (6 guide), Photo Coach (analisi privata + EXIF JPEG + chat knowledge-base), missioni con streak, tema chiaro/scuro, onboarding, condivisione setup, notifiche in-app e sincronizzazione Neon quando `DATABASE_URL` è disponibile. Tutto il percorso corrente resta utilizzabile senza servizi a pagamento.
 
 Le procedure del simulatore sono verificate sul manuale Canon EOS R10 per firmware 1.7.0 o successivo. Il modello 3D è uno schema didattico procedurale e non una riproduzione CAD.
 

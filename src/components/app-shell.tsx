@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { DesktopNavigation, MobileNavigation, SidebarUtilityLinks } from "@/components/navigation";
 import { NotificationCenter } from "@/components/notification-center";
+import { Onboarding } from "@/components/onboarding";
 import { PwaRegister } from "@/components/pwa-register";
 import { AppStateProvider } from "@/components/app-state-provider";
 import { ProfileBadge } from "@/components/profile-badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Brand() {
   return (
@@ -33,6 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link href="/tutorials" className="hidden min-h-10 items-center gap-2 border border-[var(--line)] bg-white/[0.02] px-3 text-sm text-[var(--muted)] transition hover:border-[var(--line-strong)] hover:text-[var(--paper)] sm:flex">
                 <Search size={16} aria-hidden="true" /> Cerca un tutorial
               </Link>
+              <ThemeToggle />
               <div className="hidden sm:block"><NotificationCenter /></div>
               <ProfileBadge />
             </div>
@@ -41,6 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="mx-auto max-w-[1500px] px-4 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-6 sm:px-7 sm:pt-8 lg:px-10 lg:pb-14">{children}</main>
       </div>
       <MobileNavigation />
+      <Onboarding />
     </div></AppStateProvider>
   );
 }

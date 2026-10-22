@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Aperture, Camera, CheckCircle2, ImagePlus, ShieldCheck, TriangleAlert } from "lucide-react";
+import { formatAperture, formatShutter, readPhotoExif, type PhotoExif } from "@/lib/exif";
 
 type Goal = "portrait" | "landscape" | "action" | "night";
 type Analysis = {
@@ -12,13 +14,15 @@ type Analysis = {
   sharpness: string;
   color: string;
   suggestions: string[];
+  exif: PhotoExif | null;
+  tutorialHref?: string;
 };
 
-const goals: Record<Goal, { label: string; setup: string }> = {
-  portrait: { label: "Ritratto", setup: "Av · f/1.8–f/4 · Eye Detection · ISO Auto" },
-  landscape: { label: "Paesaggio", setup: "Av · f/8 · ISO 100 · AF singolo" },
-  action: { label: "Sport e movimento", setup: "M · 1/1000 s · Servo AF · ISO Auto" },
-  night: { label: "Notte", setup: "M · 1/60 s o treppiede · diaframma aperto · RAW" },
+const goals: Record<Goal, { label: string; setup: string; tutorial: string; minShutter?: number; apertureMax?: number; isoMax?: number }> = {
+  portrait: { label: "Ritratto", setup: "Av · f/1.8–f/4 · Eye Detection · ISO Auto", tutorial: "/tutorials/ritratto/", apertureMax: 4, minShutter: 1 / 160 },
+  landscape: { label: "Paesaggio", setup: "Av · f/8 · ISO 100 · AF singolo", tutorial: "/tutorials/paesaggio/", apertureMax: 11, isoMax: 400 },
+  action: { label: "Sport e movimento", setup: "M · 1/1000 s · Servo AF · ISO Auto", tutorial: "/tutorials/sport/", minShutter: 1 / 1000 },
+  night: { label: "Notte", setup: "M · 1/60 s o treppiede · diaframma aperto · RAW", tutorial: "/tutorials/notte/", minShutter: 1 / 60 },
 };
 
 function decodeImage(file: File) {
@@ -32,7 +36,7 @@ function decodeImage(file: File) {
 }
 
 async function inspectPhoto(file: File, goal: Goal): Promise<Analysis> {
-  const image = await decodeImage(file);
+  const [image, exif] = await Promise.all([decodeImage(file), readPhotoExif(file)]);
   const scale = Math.min(1, 420 / Math.max(image.naturalWidth, image.naturalHeight));
   const width = Math.max(1, Math.round(image.naturalWidth * scale));
   const height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -74,8 +78,32 @@ async function inspectPhoto(file: File, goal: Goal): Promise<Analysis> {
   else if (edgeStrength > 24) sharpness = "Dettaglio marcato";
   const color = colorShift > 16 ? "Dominante calda" : colorShift < -16 ? "Dominante fredda" : "Colore neutro";
   if (Math.abs(colorShift) > 28) suggestions.push("Se la dominante non è intenzionale, prova AWB Priorità ambiente o correggi il bilanciamento dal RAW.");
+
+  const target = goals[goal];
+  if (exif?.shutter && target.minShutter && exif.shutter < target.minShutter) {
+    suggestions.unshift(`EXIF: tempo ${formatShutter(exif.shutter)}. Per ${target.label.toLowerCase()} punta almeno a ${formatShutter(target.minShutter)}.`);
+    score -= 10;
+  }
+  if (exif?.aperture && target.apertureMax && exif.aperture > target.apertureMax && goal === "portrait") {
+    suggestions.unshift(`EXIF: ${formatAperture(exif.aperture)}. Per separare meglio lo sfondo prova un’apertura più aperta (sotto f/${target.apertureMax}).`);
+    score -= 6;
+  }
+  if (exif?.iso && target.isoMax && exif.iso > target.isoMax && goal === "landscape") {
+    suggestions.unshift(`EXIF: ISO ${exif.iso}. In paesaggio, se puoi, scendi verso ISO 100–200 su treppiede.`);
+    score -= 6;
+  }
+
   if (!suggestions.length) suggestions.push("La base tecnica è equilibrata. Confronta ora inquadratura, sfondo e momento dello scatto.");
-  return { score: Math.max(35, Math.round(score)), exposure, contrast, sharpness, color, suggestions: suggestions.slice(0, 4) };
+  return {
+    score: Math.max(35, Math.round(score)),
+    exposure,
+    contrast,
+    sharpness,
+    color,
+    suggestions: suggestions.slice(0, 5),
+    exif,
+    tutorialHref: target.tutorial,
+  };
 }
 
 export function PhotoCoach() {
@@ -120,7 +148,7 @@ export function PhotoCoach() {
       <div className="border-b border-[var(--line)] p-5 sm:p-7">
         <div className="flex items-center gap-2 text-[var(--cyan)]"><ShieldCheck size={18} aria-hidden="true" /><p className="font-mono text-xs uppercase tracking-[0.14em]">Analisi privata sul dispositivo</p></div>
         <h2 className="font-display mt-3 text-2xl font-semibold">Carica uno scatto da migliorare</h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">La foto resta nel browser: non viene inviata né salvata online.</p>
+        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">La foto resta nel browser: non viene inviata né salvata online. Se è un JPEG, leggo anche gli EXIF.</p>
         <label htmlFor="photo-goal" className="mt-5 block text-sm font-semibold">Che tipo di foto volevi ottenere?</label>
         <select id="photo-goal" value={goal} onChange={(event) => setGoal(event.target.value as Goal)} className="mt-2 min-h-12 w-full border border-[var(--line-strong)] bg-[var(--ink)] px-4">
           {Object.entries(goals).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}
@@ -142,8 +170,25 @@ export function PhotoCoach() {
       {analysis ? <section className="premium-panel p-5 sm:p-7" aria-live="polite">
         <div className="flex items-end justify-between gap-4"><div><p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--cyan)]">Lettura tecnica</p><h2 className="font-display mt-2 text-2xl font-semibold">Punteggio indicativo</h2></div><strong className="font-display text-4xl text-[var(--signal)]">{analysis.score}</strong></div>
         <dl className="mt-5 grid gap-px bg-[var(--line)] sm:grid-cols-2">{[["Luce",analysis.exposure],["Contrasto",analysis.contrast],["Dettaglio",analysis.sharpness],["Colore",analysis.color]].map(([label,value])=><div key={label} className="bg-[var(--ink)] p-3"><dt className="text-xs text-[var(--muted)]">{label}</dt><dd className="mt-1 text-sm font-semibold">{value}</dd></div>)}</dl>
+        {analysis.exif && (analysis.exif.iso || analysis.exif.aperture || analysis.exif.shutter) ? (
+          <div className="mt-5 border border-[var(--line)] bg-black/20 p-3">
+            <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[var(--cyan)]">EXIF letti sul dispositivo</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--paper)]">
+              {[
+                analysis.exif.model,
+                formatAperture(analysis.exif.aperture),
+                formatShutter(analysis.exif.shutter),
+                analysis.exif.iso ? `ISO ${analysis.exif.iso}` : undefined,
+                analysis.exif.focalLength ? `${analysis.exif.focalLength} mm` : undefined,
+              ].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+        ) : (
+          <p className="mt-5 text-xs leading-5 text-[var(--muted)]">Nessun EXIF utile trovato (normale su PNG/WebP o JPEG ripuliti).</p>
+        )}
         <h3 className="mt-6 font-display text-lg font-semibold">Cosa provare sul prossimo scatto</h3>
         <ul className="mt-3 space-y-3">{analysis.suggestions.map((suggestion)=><li key={suggestion} className="flex gap-2 text-sm leading-6 text-[var(--muted)]"><CheckCircle2 size={17} className="mt-1 shrink-0 text-[var(--success)]" />{suggestion}</li>)}</ul>
+        {analysis.tutorialHref ? <Link href={analysis.tutorialHref} className="mt-5 inline-flex text-sm font-semibold text-[var(--signal-strong)] underline-offset-2 hover:underline">Apri la guida collegata</Link> : null}
       </section> : <section className="premium-panel p-5 text-sm leading-6 text-[var(--muted)]">Scegli l’obiettivo e una foto per ricevere indicazioni. Il punteggio valuta soltanto caratteristiche tecniche: non giudica il valore creativo dello scatto.</section>}
     </aside>
   </div>;

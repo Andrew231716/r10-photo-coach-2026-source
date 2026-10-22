@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { defaultAppState, normalizeAppState, type AppState } from "@/lib/app-state";
+import { defaultAppState, normalizeAppState, withPracticeStreak, type AppState, type ThemePreference } from "@/lib/app-state";
 
 type StorageMode = "local" | "database";
 type AppStateContextValue = AppState & {
@@ -12,6 +12,9 @@ type AppStateContextValue = AppState & {
   toggleAcademyModule: (id: string) => void;
   toggleTutorial: (slug: string) => void;
   setOwnedGear: (ids: string[]) => void;
+  setTheme: (theme: ThemePreference) => void;
+  completeOnboarding: () => void;
+  recordPractice: () => void;
 };
 
 const AppStateContext = createContext<AppStateContextValue | null>(null);
@@ -19,6 +22,10 @@ const storageKeys = {
   academyCompleted: "r10-academy-progress",
   tutorialsCompleted: "r10-completed-tutorials",
   ownedGear: "r10-owned-gear",
+  streakDays: "r10-streak-days",
+  lastPracticeDate: "r10-last-practice-date",
+  theme: "r10-theme",
+  onboardingDone: "r10-onboarding-done",
   updatedAt: "r10-state-updated-at",
 } as const;
 
@@ -33,10 +40,15 @@ function readList(key: string, fallback: string[]) {
 
 function readLocalState() {
   const updatedAt = Number(localStorage.getItem(storageKeys.updatedAt) ?? 0);
+  const streakDays = Number(localStorage.getItem(storageKeys.streakDays) ?? 0);
   return normalizeAppState({
     academyCompleted: readList(storageKeys.academyCompleted, defaultAppState.academyCompleted),
     tutorialsCompleted: readList(storageKeys.tutorialsCompleted, defaultAppState.tutorialsCompleted),
     ownedGear: readList(storageKeys.ownedGear, defaultAppState.ownedGear),
+    streakDays: Number.isFinite(streakDays) ? streakDays : 0,
+    lastPracticeDate: localStorage.getItem(storageKeys.lastPracticeDate) ?? "",
+    theme: localStorage.getItem(storageKeys.theme) === "light" ? "light" : "dark",
+    onboardingDone: localStorage.getItem(storageKeys.onboardingDone) === "1",
     updatedAt: Number.isFinite(updatedAt) ? updatedAt : 0,
   });
 }
@@ -45,6 +57,10 @@ function saveLocalState(state: AppState) {
   localStorage.setItem(storageKeys.academyCompleted, JSON.stringify(state.academyCompleted));
   localStorage.setItem(storageKeys.tutorialsCompleted, JSON.stringify(state.tutorialsCompleted));
   localStorage.setItem(storageKeys.ownedGear, JSON.stringify(state.ownedGear));
+  localStorage.setItem(storageKeys.streakDays, String(state.streakDays));
+  localStorage.setItem(storageKeys.lastPracticeDate, state.lastPracticeDate);
+  localStorage.setItem(storageKeys.theme, state.theme);
+  localStorage.setItem(storageKeys.onboardingDone, state.onboardingDone ? "1" : "0");
   localStorage.setItem(storageKeys.updatedAt, String(state.updatedAt));
 }
 
@@ -56,6 +72,11 @@ async function saveDatabaseState(state: AppState) {
     signal: AbortSignal.timeout(15000),
   });
   return response.ok;
+}
+
+function applyTheme(theme: ThemePreference) {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
 }
 
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
@@ -93,6 +114,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     catch { setLocalStorageError(true); }
     stateRef.current = localState;
     setState(localState);
+    applyTheme(localState.theme);
     setReady(true);
 
     void fetch("/api/state", { cache: "no-store", signal: AbortSignal.timeout(15000) })
@@ -118,6 +140,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
         stateRef.current = remoteState;
         persistLocal(remoteState);
+        applyTheme(remoteState.theme);
         setState(remoteState);
         setSyncStatus("saved");
       })
@@ -130,30 +153,53 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     const next = normalizeAppState({ ...update(stateRef.current), updatedAt: Date.now() });
     stateRef.current = next;
     persistLocal(next);
+    applyTheme(next.theme);
     setState(next);
     void persistRemote(next);
   }, [persistLocal, persistRemote]);
 
   const toggleAcademyModule = useCallback((id: string) => {
-    commit((current) => ({
-      ...current,
-      academyCompleted: current.academyCompleted.includes(id)
-        ? current.academyCompleted.filter((item) => item !== id)
-        : [...current.academyCompleted, id],
-    }));
+    commit((current) => {
+      const completing = !current.academyCompleted.includes(id);
+      const academyCompleted = completing
+        ? [...current.academyCompleted, id]
+        : current.academyCompleted.filter((item) => item !== id);
+      return {
+        ...current,
+        academyCompleted,
+        ...(completing ? withPracticeStreak(current) : {}),
+      };
+    });
   }, [commit]);
 
   const toggleTutorial = useCallback((slug: string) => {
-    commit((current) => ({
-      ...current,
-      tutorialsCompleted: current.tutorialsCompleted.includes(slug)
-        ? current.tutorialsCompleted.filter((item) => item !== slug)
-        : [...current.tutorialsCompleted, slug],
-    }));
+    commit((current) => {
+      const completing = !current.tutorialsCompleted.includes(slug);
+      const tutorialsCompleted = completing
+        ? [...current.tutorialsCompleted, slug]
+        : current.tutorialsCompleted.filter((item) => item !== slug);
+      return {
+        ...current,
+        tutorialsCompleted,
+        ...(completing ? withPracticeStreak(current) : {}),
+      };
+    });
   }, [commit]);
 
   const setOwnedGear = useCallback((ids: string[]) => {
     commit((current) => ({ ...current, ownedGear: ids }));
+  }, [commit]);
+
+  const setTheme = useCallback((theme: ThemePreference) => {
+    commit((current) => ({ ...current, theme }));
+  }, [commit]);
+
+  const completeOnboarding = useCallback(() => {
+    commit((current) => ({ ...current, onboardingDone: true }));
+  }, [commit]);
+
+  const recordPractice = useCallback(() => {
+    commit((current) => ({ ...current, ...withPracticeStreak(current) }));
   }, [commit]);
 
   const value = useMemo<AppStateContextValue>(() => ({
@@ -165,7 +211,10 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     toggleAcademyModule,
     toggleTutorial,
     setOwnedGear,
-  }), [ready, setOwnedGear, state, storageMode, syncStatus, localStorageError, toggleAcademyModule, toggleTutorial]);
+    setTheme,
+    completeOnboarding,
+    recordPractice,
+  }), [ready, setOwnedGear, setTheme, completeOnboarding, recordPractice, state, storageMode, syncStatus, localStorageError, toggleAcademyModule, toggleTutorial]);
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
 }

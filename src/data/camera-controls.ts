@@ -124,7 +124,7 @@ export type CoachStep = {
 };
 
 export type CoachGuide = {
-  id: "portrait-av" | "sport-servo" | "manual-focus";
+  id: "portrait-av" | "sport-servo" | "manual-focus" | "night-manual" | "video-basic" | "white-balance";
   title: string;
   prompt: string;
   steps: CoachStep[];
@@ -219,6 +219,94 @@ export const coachGuides: CoachGuide[] = [
         instruction: "Verifica che il selettore AF/MF del corpo sia abilitato nel menu Setup.",
         menuPath: ["MENU", "Set-up", "Focus mode switch (AF/MF)", "Enable"],
         check: "Questa voce riguarda gli obiettivi RF privi di selettore di messa a fuoco.",
+      },
+    ],
+  },
+  {
+    id: "night-manual",
+    title: "Notte in manuale",
+    prompt: "Imposta la R10 per scatti notturni",
+    steps: [
+      {
+        controlId: "mode-dial",
+        title: "Passa a M",
+        instruction: "Ruota la ghiera modalità su M per controllare tempo e diaframma.",
+        check: "Sul display deve comparire M.",
+      },
+      {
+        controlId: "main-dial",
+        title: "Scegli tempo e apertura",
+        instruction: "Parti da 1/60 s a mano libera, oppure più lento su treppiede, e apri il diaframma quanto possibile.",
+        check: "Se il tempo scende sotto 1/(focale equivalente), usa un appoggio o alza ISO.",
+      },
+      {
+        controlId: "quick-control",
+        title: "Imposta ISO e formato",
+        instruction: "Premi Q, alza ISO solo quanto serve e scegli RAW se vuoi margine sulle ombre.",
+        check: "ISO Auto con limite alto va bene; evita valori inutilmente alti se hai treppiede.",
+      },
+      {
+        controlId: "shutter",
+        title: "Scatta stabile",
+        instruction: "Usa autoscatto 2 s su treppiede, oppure tieni la fotocamera ben salda a mano libera.",
+        check: "Controlla l’istogramma: le alte luci non devono essere bruciate.",
+      },
+    ],
+  },
+  {
+    id: "video-basic",
+    title: "Video base 25p",
+    prompt: "Prepara la R10 per un video semplice",
+    steps: [
+      {
+        controlId: "mode-dial",
+        title: "Entra in video",
+        instruction: "Porta la ghiera sulla modalità di registrazione video.",
+        check: "La schermata deve mostrare i controlli video.",
+      },
+      {
+        controlId: "quick-control",
+        title: "Scegli 4K/25p e 1/50 s",
+        instruction: "Imposta 25 fotogrammi/s e un tempo vicino a 1/50 s per un movimento naturale.",
+        check: "A 25p, 1/50 s è il punto di partenza più bilanciato.",
+      },
+      {
+        controlId: "menu",
+        title: "Movie Servo AF",
+        instruction: "Attiva Movie Servo AF e il rilevamento soggetto adatto alla scena.",
+        menuPath: ["MENU", "AF", "Movie Servo AF", "Enable"],
+        check: "Il fuoco deve continuare ad aggiornarsi mentre registri.",
+      },
+      {
+        controlId: "shutter",
+        title: "Registra la clip",
+        instruction: "Avvia la registrazione, tieni un inizio e una fine fermi, evita zoom nervosi.",
+        check: "Una clip da 8–12 secondi è sufficiente per valutare luce e movimento.",
+      },
+    ],
+  },
+  {
+    id: "white-balance",
+    title: "Bilanciamento del bianco",
+    prompt: "Blocca il bilanciamento del bianco",
+    steps: [
+      {
+        controlId: "quick-control",
+        title: "Apri Quick Control",
+        instruction: "Premi Q e seleziona White balance.",
+        check: "Deve aprirsi la riga del bilanciamento del bianco.",
+      },
+      {
+        controlId: "multi-controller",
+        title: "Scegli un preset",
+        instruction: "Per luce artificiale prova Tungsteno o Fluorescente; per esterni prova Daylight.",
+        check: "Il preset scelto resta visibile nella schermata di scatto.",
+      },
+      {
+        controlId: "quick-control",
+        title: "Conferma con SET",
+        instruction: "Premi SET per lasciare il valore fisso e evitare salti di colore tra uno scatto e l’altro.",
+        check: "AWB non deve più cambiare da solo durante la sessione.",
       },
     ],
   },

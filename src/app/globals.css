@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-:root {
+:root,
+html[data-theme="dark"] {
   --font-sans: var(--font-sans-face), "Segoe UI", Helvetica, sans-serif;
   --font-display: var(--font-display-face), Georgia, "Times New Roman", serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -19,6 +20,30 @@
   --success: #7ccd91;
   --amber-glow: rgba(240, 179, 35, 0.22);
   --cyan-glow: rgba(85, 212, 198, 0.14);
+  --page-glow-a: rgba(240, 179, 35, 0.14);
+  --page-glow-b: rgba(85, 212, 198, 0.05);
+  --page-fade: #0a0d0f;
+}
+
+html[data-theme="light"] {
+  --ink: #eef2f4;
+  --carbon: #e4eaee;
+  --panel: #ffffff;
+  --panel-raised: #f5f8fa;
+  --line: #c9d2d8;
+  --line-strong: #9aa8b2;
+  --paper: #12161a;
+  --muted: #4f5b64;
+  --signal: #9a6b00;
+  --signal-strong: #7a5200;
+  --cyan: #0f766e;
+  --danger: #b42318;
+  --success: #16794c;
+  --amber-glow: rgba(154, 107, 0, 0.14);
+  --cyan-glow: rgba(15, 118, 110, 0.1);
+  --page-glow-a: rgba(154, 107, 0, 0.1);
+  --page-glow-b: rgba(15, 118, 110, 0.08);
+  --page-fade: #f3f6f8;
 }
 
 * { box-sizing: border-box; }
@@ -29,13 +54,17 @@ html {
   scroll-behavior: smooth;
 }
 
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(circle at 80% -12%, rgba(240, 179, 35, 0.14), transparent 34rem),
-    radial-gradient(circle at 5% 45%, rgba(85, 212, 198, 0.05), transparent 30rem),
-    linear-gradient(180deg, #0a0d0f 0%, var(--ink) 52rem);
+    radial-gradient(circle at 80% -12%, var(--page-glow-a), transparent 34rem),
+    radial-gradient(circle at 5% 45%, var(--page-glow-b), transparent 30rem),
+    linear-gradient(180deg, var(--page-fade) 0%, var(--ink) 52rem);
   color: var(--paper);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }

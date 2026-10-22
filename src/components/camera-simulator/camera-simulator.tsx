@@ -21,6 +21,9 @@ function matchGuide(query: string) {
   const normalized = query.toLocaleLowerCase("it");
   if (/sport|servo|atleta|movimento|tracking/.test(normalized)) return "sport-servo" as const;
   if (/manual|mf|stella|via lattea|astro/.test(normalized)) return "manual-focus" as const;
+  if (/notte|buio|iso alto|lunga esposizione/.test(normalized)) return "night-manual" as const;
+  if (/video|clip|4k|movie/.test(normalized)) return "video-basic" as const;
+  if (/bilanciamento|white balance|\bwb\b|tungsteno|kelvin/.test(normalized)) return "white-balance" as const;
   if (/ritratt|portrait|eye|occhi|diaframma|\bav\b/.test(normalized)) return "portrait-av" as const;
   return null;
 }
@@ -87,7 +90,7 @@ export function CameraSimulator() {
       </div>
       <section className="grid gap-px border border-[var(--line)] bg-[var(--line)] sm:grid-cols-3" aria-label="Come usare il simulatore">
         {[
-          ["01", "Scegli una guida", "Av, Eye Detection, Servo AF o fuoco manuale"],
+          ["01", "Scegli una guida", "Ritratto, sport, notte, video, WB o fuoco manuale"],
           ["02", "Segui il punto luminoso", "Il modello ruota verso il comando corretto"],
           ["03", "Ripeti sulla fotocamera", "Conferma ogni passaggio sulla tua EOS R10"],
         ].map(([number, title, description]) => (
