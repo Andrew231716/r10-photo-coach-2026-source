@@ -1,11 +1,13 @@
-const CACHE = "r10-photo-coach-v4";
+const CACHE = "r10-photo-coach-v5";
 const CORE = [
   "/",
   "/academy",
   "/tutorials",
+  "/coach",
   "/simulator",
   "/lenses",
   "/gear",
+  "/profile",
   "/manifest.webmanifest",
   "/icons/icon.svg",
   "/icons/icon-192.png",

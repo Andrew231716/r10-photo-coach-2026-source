@@ -8,8 +8,8 @@ const noStoreHeaders = { "Cache-Control": "no-store, max-age=0" };
 export async function GET() {
   if (!hasDatabase()) {
     return Response.json(
-      { status: "degraded", database: "not_configured" },
-      { status: 503, headers: noStoreHeaders },
+      { status: "ok", mode: "local", database: "not_configured" },
+      { headers: noStoreHeaders },
     );
   }
 
@@ -18,12 +18,12 @@ export async function GET() {
     await sql`select 1 as ok`;
 
     return Response.json(
-      { status: "ok", database: "connected" },
+      { status: "ok", mode: "database", database: "connected" },
       { headers: noStoreHeaders },
     );
   } catch {
     return Response.json(
-      { status: "error", database: "unreachable" },
+      { status: "degraded", mode: "local", database: "unreachable" },
       { status: 503, headers: noStoreHeaders },
     );
   }

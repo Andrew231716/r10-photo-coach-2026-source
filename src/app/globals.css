@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --font-sans: "Aptos", "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-display: "Aptos Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-sans-face), "Segoe UI", Helvetica, sans-serif;
+  --font-display: var(--font-display-face), Georgia, "Times New Roman", serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ink: #070809;
   --carbon: #0d0f11;

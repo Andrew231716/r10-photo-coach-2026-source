@@ -81,6 +81,7 @@ async function inspectPhoto(file: File, goal: Goal): Promise<Analysis> {
 export function PhotoCoach() {
   const [goal, setGoal] = useState<Goal>("portrait");
   const [preview, setPreview] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [busy, setBusy] = useState(false);
@@ -88,17 +89,30 @@ export function PhotoCoach() {
 
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
-  const selectPhoto = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  useEffect(() => {
     if (!file) return;
-    setError(""); setAnalysis(null);
-    if (!file.type.startsWith("image/")) { setError("Seleziona un file immagine."); return; }
-    if (file.size > 20 * 1024 * 1024) { setError("La foto supera 20 MB. Esportane una copia più piccola e riprova."); return; }
+    let cancelled = false;
+    setBusy(true);
+    setError("");
+    inspectPhoto(file, goal)
+      .then((result) => { if (!cancelled) setAnalysis(result); })
+      .catch(() => { if (!cancelled) { setAnalysis(null); setError("Questo formato non può essere letto dal browser. Prova una copia JPEG, PNG o WebP."); } })
+      .finally(() => { if (!cancelled) setBusy(false); });
+    return () => { cancelled = true; };
+  }, [file, goal]);
+
+  const selectPhoto = (event: ChangeEvent<HTMLInputElement>) => {
+    const next = event.target.files?.[0];
+    if (!next) return;
+    setError("");
+    setAnalysis(null);
+    if (!next.type.startsWith("image/")) { setError("Seleziona un file immagine."); return; }
+    if (next.size > 20 * 1024 * 1024) { setError("La foto supera 20 MB. Esportane una copia più piccola e riprova."); return; }
     if (preview) URL.revokeObjectURL(preview);
-    setPreview(URL.createObjectURL(file)); setFileName(file.name); setBusy(true);
-    try { setAnalysis(await inspectPhoto(file, goal)); }
-    catch { setError("Questo formato non può essere letto dal browser. Prova una copia JPEG, PNG o WebP."); }
-    finally { setBusy(false); event.target.value = ""; }
+    setPreview(URL.createObjectURL(next));
+    setFileName(next.name);
+    setFile(next);
+    event.target.value = "";
   };
 
   return <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,.8fr)]">
@@ -108,7 +122,7 @@ export function PhotoCoach() {
         <h2 className="font-display mt-3 text-2xl font-semibold">Carica uno scatto da migliorare</h2>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">La foto resta nel browser: non viene inviata né salvata online.</p>
         <label htmlFor="photo-goal" className="mt-5 block text-sm font-semibold">Che tipo di foto volevi ottenere?</label>
-        <select id="photo-goal" value={goal} onChange={(event) => { setGoal(event.target.value as Goal); setAnalysis(null); }} className="mt-2 min-h-12 w-full border border-[var(--line-strong)] bg-[var(--ink)] px-4">
+        <select id="photo-goal" value={goal} onChange={(event) => setGoal(event.target.value as Goal)} className="mt-2 min-h-12 w-full border border-[var(--line-strong)] bg-[var(--ink)] px-4">
           {Object.entries(goals).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}
         </select>
         <label className="mt-4 flex min-h-14 cursor-pointer items-center justify-center gap-2 bg-[var(--signal)] px-5 font-semibold text-[var(--ink)]">

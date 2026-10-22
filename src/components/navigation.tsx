@@ -77,9 +77,11 @@ export function SidebarUtilityLinks() {
       <div className="border border-[var(--line)] bg-white/[0.02] p-4">
         <div className="flex items-center gap-2 text-sm text-[var(--paper)]">
           <LibraryBig size={17} className="text-[var(--cyan)]" aria-hidden="true" />
-          <span>Fase 2 attiva</span>
+          <span>Coach + simulatore</span>
         </div>
-        <p className="mt-2 text-[0.78rem] leading-5 text-[var(--muted)]">Academy e kit pronti. Il simulatore EOS R10 guida ora comandi e menu passo passo.</p>
+        <p className="mt-2 text-[0.78rem] leading-5 text-[var(--muted)]">
+          Academy, guide, comandi 3D e analisi foto privata sul dispositivo. I progressi restano sul telefono e si sincronizzano se Neon è collegato.
+        </p>
       </div>
     </div>
   );
